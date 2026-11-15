@@ -252,8 +252,7 @@
     </div>
   </div>
 
-  <div class="tab active" id="tab-trans">
-    <div class="card">
+  <div class="tab active" id="tab-trans">    <div class="card">
       <h3>ثبت دریافتی / پرداختی / طرف حساب</h3>
       <div class="filterLabel">نوع</div>
       <select id="tMainType"><option value="in">دریافتی</option><option value="out">پرداختی</option><option value="party">طرف حساب</option></select>
@@ -580,10 +579,12 @@
   <button type="button" class="side-drawer-item" data-goto="notebook"><span class="side-icon">📝</span><span class="side-label">یادداشت</span></button>
   <button type="button" class="side-drawer-item" data-goto="recurring"><span class="side-icon">🔁</span><span class="side-label">تکرارشونده</span></button>
   <button type="button" class="side-drawer-item" data-goto="report"><span class="side-icon">📊</span><span class="side-label">گزارش</span></button>
+  <button type="button" class="side-drawer-item" data-goto="budget"><span class="side-icon">📉</span><span class="side-label">پیش‌بینی بودجه</span></button>
   <button type="button" class="side-drawer-item" data-goto="set"><span class="side-icon">⚙️</span><span class="side-label">تنظیمات</span></button>
   <button type="button" class="side-drawer-item" data-goto="about"><span class="side-icon">ℹ️</span><span class="side-label">درباره</span></button>
 </div>
 
+<!-- مودال‌ها و فرم‌ها -->
 <div class="modal-bg" id="licenseModalBg">
   <div class="modal" style="max-width:340px">
     <h4>🔑 ورود به برنامه</h4>
@@ -633,7 +634,7 @@
     <div style="text-align:center;padding:8px 0">
       <div style="font-size:52px;line-height:1">🏠</div>
       <h3 style="margin:8px 0 4px;color:var(--pri);font-size:18px">حساب خانواده</h3>
-      <div class="mut" style="margin-bottom:12px">نسخه ۲.۸ (آفلاین)</div>
+      <div class="mut" style="margin-bottom:12px">نسخه ۲.۹ (بودجه‌بندی هوشمند)</div>
     </div>
     <div id="aboutCustomText" style="font-size:13px;line-height:1.9;white-space:pre-wrap;text-align:right;padding:10px;background:var(--chip);border-radius:10px;margin-bottom:10px"></div>
     <div class="actions"><button class="sec" id="aboutCloseBtn">بستن</button><button id="aboutBackBtn">🏠 بازگشت</button></div>
@@ -841,10 +842,25 @@
   </div>
 </div>
 
+<!-- مودال پیش بینی بودجه -->
+<div class="modal-bg" id="budgetModalBg">
+  <div class="modal" style="max-width:500px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="detail-head">
+      <h4 id="budgetTitle">📊 پیش‌بینی بودجه هوشمند</h4>
+      <button class="del" id="budgetCloseBtn" style="width:auto;padding:5px 12px;flex:none">✕</button>
+    </div>
+    <div style="overflow-y:auto;flex:1;padding-left:4px">
+      <p class="mut" style="font-size:12px;margin-bottom:10px">این بخش بر اساس میانگین هزینه‌های ۳ ماه گذشته شما، بودجه ماه آینده را پیش‌بینی می‌کند. تیک هر بخشی را که نمی‌خواهید بردارید.</p>
+      <div id="budgetForm" style="display:flex;flex-direction:column;gap:6px"></div>
+      <button id="calcBudgetBtn" style="margin-top:14px;background:linear-gradient(135deg,#1e9e5a,#157a44);color:#fff;padding:12px;border-radius:8px;font-weight:bold">🔄 محاسبه مجدد بودجه</button>
+      <div id="budgetResult" style="margin-top:14px;padding:12px;background:var(--chip);border-radius:10px;display:none"></div>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
-<script>
-(function(){
+<script>(function(){
 'use strict';
 
 const $ = id => document.getElementById(id);
@@ -940,7 +956,7 @@ const DEFAULT_CATS = { out:['خواربار','اجاره','قبوض','درمان
 const AUTO_BACKUP_KEY = 'familyAccAutoBackups';
 
 function defaultData(){
-  return { schema: 20, accounts: [{id:'a'+Date.now(), name:'خانوار'}], active: null, trans: [], people: [], store: [], parties: [], buyerCodes: [], notes: [], recurring: [], cats: {out:[...DEFAULT_CATS.out], in:[...DEFAULT_CATS.in]}, subcats: {out:{}, in:{}}, reportFilter: {fromJ:null, toJ:null}, ui: {font:'Vazirmatn', fs:14, theme:'light', lang:'fa'}, autoBackup: true, aboutText: 'حساب خانواده — برنامهٔ مدیریت مالی خانواده.\n\nنسخه ۲.۸ (آفلاین)', recurringLastRun: {} };
+  return { schema: 20, accounts: [{id:'a'+Date.now(), name:'خانوار'}], active: null, trans: [], people: [], store: [], parties: [], buyerCodes: [], notes: [], recurring: [], cats: {out:[...DEFAULT_CATS.out], in:[...DEFAULT_CATS.in]}, subcats: {out:{}, in:{}}, reportFilter: {fromJ:null, toJ:null}, ui: {font:'Vazirmatn', fs:14, theme:'light', lang:'fa'}, autoBackup: true, aboutText: 'حساب خانواده — برنامهٔ مدیریت مالی خانواده.\n\nنسخه ۲.۹ (بودجه‌بندی هوشمند)', recurringLastRun: {} };
 }
 
 const DB = {
@@ -999,7 +1015,7 @@ function migrate(d){
   out.store.forEach(s => { if(!Array.isArray(s.log)) s.log = []; if(typeof s.low !== 'number') s.low = 0; if(typeof s.cat !== 'string') s.cat = ''; if(typeof s.subcat !== 'string') s.subcat = ''; });
   return out;
 }
-function migrateV19toV20(d){ d.schema = 20; if(!Array.isArray(d.notes)) d.notes = []; if(!Array.isArray(d.recurring)) d.recurring = []; if(!d.aboutText) d.aboutText = 'حساب خانواده — نسخه ۲.۸ (آفلاین)'; if(!d.recurringLastRun) d.recurringLastRun = {}; return d; }
+function migrateV19toV20(d){ d.schema = 20; if(!Array.isArray(d.notes)) d.notes = []; if(!Array.isArray(d.recurring)) d.recurring = []; if(!d.aboutText) d.aboutText = 'حساب خانواده — نسخه ۲.۹ (بودجه‌بندی هوشمند)'; if(!d.recurringLastRun) d.recurringLastRun = {}; return d; }
 
 async function doAutoBackup(){
   try{
@@ -1173,6 +1189,7 @@ function copyText(text){
   });
 }
 
+// ================= PWA & INSTALL =================
 async function setupPWA(){
   if('serviceWorker' in navigator && location.protocol === 'https:'){
     try{ await navigator.serviceWorker.register('sw.js'); console.log('SW registered'); }catch(e){ console.log('SW setup error:', e); }
@@ -1244,6 +1261,55 @@ function viewReceiptModal(id) {
   }
 }
 
+// ==========================================
+// توابع بودجه بندی هوشمند
+// ==========================================
+function openBudgetModal() {
+  $('budgetModalBg').classList.add('show');
+  $('budgetResult').style.display = 'none';
+  
+  let expCats = [...new Set(DB.data.trans.filter(t => t.acct === DB.data.active && t.type === 'out' && !t.partyId).map(t => t.cat || 'بدون دسته'))];
+  if(!expCats.length) { $('budgetForm').innerHTML = '<div class="mut">سابقه هزینه‌ای ثبت نکرده‌اید.</div>'; return; }
+  
+  let now = new Date();
+  let threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+  
+  $('budgetForm').innerHTML = expCats.map(cat => {
+    let sum = DB.data.trans.filter(t => {
+        if(t.acct !== DB.data.active || t.type !== 'out' || t.partyId || (t.cat || 'بدون دسته') !== cat) return false;
+        let [jy, jm, jd] = t.dateJ.split('/').map(Number);
+        let g = jToG(jy, jm, jd);
+        let d = new Date(g[0], g[1]-1, g[2]);
+        return d >= threeMonthsAgo;
+    }).reduce((s, t) => s + t.amount, 0);
+    
+    let avg = Math.round(sum / 3);
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px dashed var(--line)">
+      <label style="display:flex;align-items:center;gap:8px;margin:0;cursor:pointer;font-size:13px">
+        <input type="checkbox" class="budget-check" data-cat="${esc(cat)}" data-avg="${avg}" checked style="width:18px;height:18px;margin:0"> 
+        ${esc(cat)}
+      </label>
+      <span style="font-weight:bold;font-size:12px;color:var(--mut)">${fmt(avg)} تومان/ماه</span>
+    </div>`;
+  }).join('');
+}
+
+function calculateBudget() {
+  let total = 0;
+  document.querySelectorAll('.budget-check:checked').forEach(chk => {
+    total += (+chk.dataset.avg || 0);
+  });
+  
+  let res = $('budgetResult');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div style="text-align:center;margin-bottom:10px">
+      <div class="mut" style="font-size:12px">بودجه پیش‌بینی شده بر اساس سابقه شما</div>
+      <div style="font-size:24px;font-weight:bold;color:var(--pri);margin:6px 0">${fmt(total)} تومان</div>
+    </div>
+    <div class="mut" style="font-size:11px;line-height:1.6;text-align:justify">این مبلغ بر اساس میانگین ۳ ماه گذشته شما محاسبه شده است. با حذف تیک هر بخش، مبلغ آن از کل کسر می‌شود تا بتوانید بودجه خود را مدیریت کنید.</div>
+  `;
+}
 // ==========================================
 
 let syncFileHandle = null;
@@ -1526,7 +1592,6 @@ let tReceiptData = '', tReceiptName = '', tReceiptType = '';
 let etReceiptData = '', etReceiptName = '', etReceiptType = '';
 let etCurrent = null;
 
-// تغییر در تابع نمایش عکس سند در ویرایش
 function renderReceiptPreview(boxId, data, type, onRemove){
   let box = $(boxId); if(!box) return;
   if(!data){ box.innerHTML = ''; return; }
@@ -2210,7 +2275,7 @@ async function restoreAutoBackup(){
 }
 
 function resetAll(){ if(!safeConfirm('همه داده پاک شوند؟')) return; (async () => { try{ await IDB.del('main'); }catch(e){} try{ localStorage.removeItem('familyAcc'); localStorage.removeItem(AUTO_BACKUP_KEY); }catch(e){} location.reload(); })(); }
-function showAbout(){ let c = $('aboutCustomText'); if(c) c.textContent = DB.data.aboutText || 'حساب خانواده — نسخه ۲.۸ (آفلاین)'; $('aboutBg').classList.add('show'); }
+function showAbout(){ let c = $('aboutCustomText'); if(c) c.textContent = DB.data.aboutText || 'حساب خانواده — نسخه ۲.۹ (بودجه‌بندی هوشمند)'; $('aboutBg').classList.add('show'); }
 
 function updateTransStoreLink(){ let mt = $('tMainType'); if(!mt) return; let eff = mt.value; if(eff === 'party'){ let pd = $('tPartyDir'); if(pd) eff = pd.value; } let isOut = eff === 'out'; let box = $('tStoreLinkBox'); if(box) box.style.display = isOut ? 'block' : 'none'; if(!isOut){ if($('tAddToStore')) $('tAddToStore').checked = false; if($('tStoreFields')) $('tStoreFields').style.display = 'none'; } }
 function updateTransStoreFields(){ let chk = $('tAddToStore'), box = $('tStoreFields'); if(!chk || !box) return; if(chk.checked){ box.style.display = 'block'; updateStoreItemPreview(); } else box.style.display = 'none'; }
@@ -2361,6 +2426,26 @@ function bindEvents(){
   on('catMgmtType','change', renderCatMgmtList);
   on('catMgmtNewName','keypress', e => { if(e.key === 'Enter') addCatFromMgmt(); });
 
+  // اتصال دکمه‌های منوی کناری
+  document.querySelectorAll('.side-drawer-item').forEach(btn => btn.addEventListener('click', () => { 
+    let t = btn.getAttribute('data-goto'); 
+    closeSideDrawer(); 
+    if(t === 'about'){ showAbout(); } 
+    else if(t === 'budget'){ openBudgetModal(); }
+    else goToTab(t); 
+  }));
+
+  // اتصال دکمه‌های داخل پنجره بودجه
+  let bClose = document.getElementById('budgetCloseBtn');
+  if(bClose) bClose.addEventListener('click', () => $('budgetModalBg').classList.remove('show'));
+  
+  let bCalc = document.getElementById('calcBudgetBtn');
+  if(bCalc) bCalc.addEventListener('click', calculateBudget);
+  
+  document.addEventListener('change', (e) => {
+    if(e.target && e.target.classList.contains('budget-check')) calculateBudget();
+  });
+
   on('acctSel','change', e => switchAcct(e.target.value));
   on('addAcctBtn','click', addAcct);
 
@@ -2387,7 +2472,6 @@ function bindEvents(){
 
   on('sideEdgeTab','click', e => { e.stopPropagation(); let d = $('sideDrawer'); if(d.classList.contains('open')) closeSideDrawer(); else openSideDrawer(); });
   on('sideDrawerClose','click', closeSideDrawer);
-  document.querySelectorAll('.side-drawer-item').forEach(btn => btn.addEventListener('click', () => { let t = btn.getAttribute('data-goto'); closeSideDrawer(); if(t === 'about'){ showAbout(); } else goToTab(t); }));
   document.querySelectorAll('[data-back-to-trans]').forEach(btn => btn.addEventListener('click', () => goToTab('trans')));
   document.addEventListener('click', e => { let d = $('sideDrawer'), b = $('sideEdgeTab'); if(!d.classList.contains('open')) return; if(d.contains(e.target)) return; if(b && b.contains(e.target)) return; closeSideDrawer(); });
 
@@ -2406,7 +2490,7 @@ function bindEvents(){
   on('partyRenameBtn','click', partyDetailRename);
   on('partyDeleteBtn','click', partyDetailDelete);
 
-  ['calendarBg','editTransBg','storeMoveBg','storeLogBg','lowModalBg','saveBackupBg','exitBg','imgViewBg','catMgmtBg','listRangeBg','partyMgmtBg','storeMgmtBg','quickStockBg','partyTransBg','aboutBg','storePickerBg','transferLicenseBg','reportModalBg','catDetailBg'].forEach(id => {
+  ['calendarBg','editTransBg','storeMoveBg','storeLogBg','lowModalBg','saveBackupBg','exitBg','imgViewBg','catMgmtBg','listRangeBg','partyMgmtBg','storeMgmtBg','quickStockBg','partyTransBg','aboutBg','storePickerBg','transferLicenseBg','reportModalBg','catDetailBg','budgetModalBg'].forEach(id => {
     let bg = $(id); if(!bg) return;
     bg.addEventListener('click', e => { if(e.target === bg){ bg.classList.remove('show'); if(id === 'catDetailBg') catDetailCtx = null; if(id === 'partyTransBg') partyDetailId = null; } });
   });
@@ -2492,7 +2576,7 @@ async function boot(){
   else showLockIfNeeded();
 
   if(isLicenseValid()) setTimeout(runRecurring, 1000);
-  console.info('[FAMILY-ACC v2.8] کد مالک:', OWNER_MASTER_CODE);
+  console.info('[FAMILY-ACC v2.9] کد مالک:', OWNER_MASTER_CODE);
 }
 
 if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', () => boot().catch(e => console.error('boot:', e))); }
