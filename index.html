@@ -279,6 +279,10 @@
           <div class="filterLabel">واحد</div><input id="tStoreUnit" placeholder="کیلوگرم">
           <div class="filterLabel">مقدار</div><input id="tStoreQty" type="text" inputmode="numeric" placeholder="مقدار">
           <div class="selectedItemPreview" id="tStoreItemHint">💡 نام کالا</div>
+          <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;cursor:pointer">
+            <input type="checkbox" id="tStoreIsGift" style="width:18px;height:18px;margin:0"> 
+            🎁 این کالا اهدایی است (بدون پرداخت)
+          </label>
         </div>
       </div>
       <textarea id="tNote" placeholder="توضیحات"></textarea>
@@ -326,6 +330,10 @@
       <div class="filterLabel">دسته</div><select id="sCat"></select>
       <div class="filterLabel">زیردسته</div><select id="sSubcat"></select>
       <input id="sLow" type="text" inputmode="numeric" placeholder="حد هشدار (اختیاری)">
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;margin-bottom:8px;font-size:12px;cursor:pointer">
+        <input type="checkbox" id="sIsGift" style="width:18px;height:18px;margin:0"> 
+        🎁 این کالا اهدایی است (بدون پرداخت)
+      </label>
       <div class="row"><button id="addItemBtn">افزودن کالا</button><button class="sec" id="quickStockBtn">📥 افزودن موجودی</button></div>
     </div>
     <div class="card">
@@ -853,6 +861,7 @@
       <p class="mut" style="font-size:12px;margin-bottom:10px">این بخش بر اساس میانگین هزینه‌های ۳ ماه گذشته شما و با در نظر گرفتن موجودی انبار، بودجه ماه آینده را پیش‌بینی می‌کند.</p>
       <div id="budgetForm" style="display:flex;flex-direction:column;gap:6px"></div>
       <button id="calcBudgetBtn" style="margin-top:14px;background:linear-gradient(135deg,#1e9e5a,#157a44);color:#fff;padding:12px;border-radius:8px;font-weight:bold">🔄 محاسبه مجدد بودجه</button>
+      <button id="printBudgetBtn" style="margin-top:8px;background:var(--pri);color:#fff;padding:12px;border-radius:8px;font-weight:bold">🖨️ چاپ / ذخیره PDF</button>
       <div id="budgetResult" style="margin-top:14px;padding:12px;background:var(--chip);border-radius:10px;display:none"></div>
     </div>
   </div>
@@ -1256,7 +1265,7 @@ function viewReceiptModal(id) {
     let a = document.createElement('a'); a.href = t.receiptData; a.download = t.receiptName || 'receipt'; a.target = '_blank'; document.body.appendChild(a); a.click(); a.remove();
   }
 }// ==========================================
-// توابع بودجه بندی هوشمند (با در نظر گرفتن درآمد و انبار)
+// توابع بودجه بندی هوشمند (با در نظر گرفتن درآمد، انبار و کالای اهدایی)
 // ==========================================
 function openBudgetModal() {
   $('budgetModalBg').classList.add('show');
@@ -1299,8 +1308,10 @@ function openBudgetModal() {
     
     let avgExp = Math.round(sum / 3);
     
-    // ۳. هوشمندی انبار
-    let stockItems = DB.data.store.filter(s => s.cat === cat);
+    // ۳. هوشمندی انبار (فقط کالاهای خریداری شده، نه اهدایی)
+    let stockItems = DB.data.store.filter(s => s.cat === cat).filter(s => {
+        return (s.log || []).some(l => l.delta > 0 && !l.isGift);
+    });
     let lowStockCount = stockItems.filter(s => isLow(s)).length;
     let okStockCount = stockItems.filter(s => !isLow(s) && itemQty(s) > 0).length;
     
@@ -1372,7 +1383,83 @@ function calculateBudget(incomeAmount) {
     </div>
   `;
 }
-// ==========================================
+
+function printBudgetReport() {
+  let avgIncome = 0;
+  let now = new Date();
+  let threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+  let totalIncome = DB.data.trans.filter(t => {
+      if(t.acct !== DB.data.active || t.type !== 'in' || t.partyId) return false;
+      let [jy, jm, jd] = t.dateJ.split('/').map(Number);
+      let g = jToG(jy, jm, jd);
+      let d = new Date(g[0], g[1]-1, g[2]);
+      return d >= threeMonthsAgo;
+  }).reduce((s, t) => s + t.amount, 0);
+  avgIncome = Math.round(totalIncome / 3);
+
+  let totalExp = 0;
+  let rows = '';
+  document.querySelectorAll('.budget-check:checked').forEach(chk => {
+    let avg = +chk.dataset.avg || 0;
+    totalExp += avg;
+    let cat = chk.getAttribute('data-cat');
+    rows += `<tr><td>${cat}</td><td class="bad">${fmt(avg)}</td></tr>`;
+  });
+
+  let diff = avgIncome - totalExp;
+  let diffLabel = diff >= 0 ? 'مازاد' : 'کسری';
+  let diffColor = diff >= 0 ? '#1e9e5a' : '#d64545';
+
+  let html = `<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8">
+    <title>گزارش پیش‌بینی بودجه</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <style>
+      body{font-family:Vazirmatn,Tahoma,sans-serif;padding:24px;color:#222;background:#fff}
+      .header{text-align:center;padding-bottom:16px;border-bottom:3px solid #2d6cdf;margin-bottom:20px}
+      .logo{font-size:48px;line-height:1}
+      h1{margin:8px 0;color:#2d6cdf;font-size:24px}
+      h3{margin:8px 0;color:#2d6cdf;font-size:18px}
+      .sub{color:#666;font-size:13px;margin:4px 0}
+      table{width:100%;border-collapse:collapse;font-size:13px;margin-top:16px}
+      th,td{border:1px solid #ddd;padding:10px;text-align:center}
+      th{background:#e8f0fe;color:#1a4a9e;font-weight:bold}
+      .bad{color:#d64545;font-weight:bold}
+      .summary{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+      .box{flex:1;min-width:140px;padding:12px;border-radius:8px;border:1px solid #ddd;text-align:center;background:#f8faff}
+      .box .l{font-size:12px;color:#666}
+      .box .v{font-size:18px;font-weight:bold;margin-top:4px}
+      .footer{margin-top:24px;text-align:center;font-size:11px;color:#999;border-top:1px dashed #ddd;padding-top:12px}
+    </style></head><body>
+    <div class="header">
+      <div class="logo">🏠</div>
+      <h1>حساب خانواده</h1>
+      <h3>📊 گزارش پیش‌بینی بودجه</h3>
+      <div class="sub">حساب: ${esc(DB.data.accounts.find(a => a.id === DB.data.active)?.name || '—')} · تاریخ چاپ: ${todayJ()}</div>
+    </div>
+    
+    <table>
+      <thead>
+        <tr><th>دسته هزینه</th><th>بودجه پیشنهادی (تومان)</th></tr>
+      </thead>
+      <tbody>
+        ${rows || '<tr><td colspan="2">هیچ هزینه‌ای انتخاب نشده است</td></tr>'}
+      </tbody>
+    </table>
+
+    <div class="summary">
+      <div class="box"><div class="l">میانگین درآمد ماهانه</div><div class="v" style="color:#1e9e5a">${fmt(avgIncome)}</div></div>
+      <div class="box"><div class="l">مجموع هزینه‌های انتخابی</div><div class="v bad">${fmt(totalExp)}</div></div>
+      <div class="box"><div class="l">${diffLabel}</div><div class="v" style="color:${diffColor}">${fmt(Math.abs(diff))}</div></div>
+    </div>
+
+    <div class="footer">حساب خانواده · ${todayJ()}</div>
+    <script>setTimeout(()=>{window.print();}, 500);<\/script>
+    </body></html>`;
+
+  let w = window.open('', '_blank');
+  if(!w){ toast('پاپ‌آپ را آزاد کنید'); return; }
+  w.document.write(html); w.document.close();
+}
 
 let syncFileHandle = null;
 async function connectCloud(){
@@ -1689,6 +1776,7 @@ function resetTransForm(){
   $('tStoreItemName').value = ''; $('tStoreUnit').value = ''; $('tStoreQty').value = '';
   $('tAddToStore').checked = false; $('tStoreFields').style.display = 'none';
   $('tStoreItemHint').className = 'selectedItemPreview'; $('tStoreItemHint').innerHTML = '💡 نام کالا';
+  $('tStoreIsGift').checked = false;
   $('smsHint').textContent = '';
   tReceiptData = ''; tReceiptName = ''; tReceiptType = '';
   renderReceiptPreview('tReceiptPreview','','', () => {});
@@ -1696,25 +1784,49 @@ function resetTransForm(){
   refreshCatOptionsFor('t'); updateTransStoreLink();
 }
 async function addTrans(){
-  let amt = parseAmount($('tAmount').value); if(!amt || amt <= 0){ toast('مبلغ معتبر'); return; }
+  let amt = parseAmount($('tAmount').value);
+  let addToStore = $('tAddToStore').checked;
+  let isGift = $('tStoreIsGift').checked;
+  
+  if(!addToStore && (!amt || amt <= 0)){ toast('مبلغ معتبر'); return; }
+  if(addToStore && isGift) amt = 0;
+  
   let dateJ = $('tDateBtn').dataset.iso; if(!isValidJ(dateJ)){ toast('تاریخ'); return; }
   let mainType = $('tMainType').value, type, partyId = '', cat = '', subcat = '';
+  
   if(mainType === 'party'){ type = $('tPartyDir').value; partyId = $('tPartyId').value; if(!partyId || partyId === '__add_new__'){ toast('طرف'); return; } }
   else { type = mainType; cat = $('tCat').value || ''; subcat = $('tSubcat').value || ''; if(cat === '__add_new__') cat = ''; if(subcat === '__add_new__') subcat = ''; }
-  let addToStore = $('tAddToStore').checked, siName = '', siUnit = '', sq = 0;
-  if(addToStore){ siName = ($('tStoreItemName').value||'').trim(); siUnit = ($('tStoreUnit').value||'').trim(); sq = parseAmount($('tStoreQty').value); if(!siName){ toast('نام کالا'); return; } if(!sq || sq <= 0){ toast('مقدار'); return; } }
-  DB.data.trans.push({ id:Date.now(), acct:DB.data.active, type, amount:amt, partyId:partyId||'', cat, subcat, note:$('tNote').value.trim(), card:$('tCard').value.trim(), dateJ, receiptText:'', receiptData:tReceiptData, receiptName:tReceiptName, receiptType:tReceiptType, createdAt: Date.now() });
+  
+  let siName = '', siUnit = '', sq = 0;
+  if(addToStore){ 
+    siName = ($('tStoreItemName').value||'').trim(); 
+    siUnit = ($('tStoreUnit').value||'').trim(); 
+    sq = parseAmount($('tStoreQty').value); 
+    if(!siName){ toast('نام کالا'); return; } 
+    if(!sq || sq <= 0){ toast('مقدار'); return; } 
+  }
+  
+  if(amt > 0) {
+      DB.data.trans.push({ id:Date.now(), acct:DB.data.active, type, amount:amt, partyId:partyId||'', cat, subcat, note:$('tNote').value.trim(), card:$('tCard').value.trim(), dateJ, receiptText:'', receiptData:tReceiptData, receiptName:tReceiptName, receiptType:tReceiptType, createdAt: Date.now() });
+  }
+  
   let msg = '';
   if(addToStore){
     if(cat){ if(!DB.data.cats.out) DB.data.cats.out = []; if(!DB.data.cats.out.includes(cat)) DB.data.cats.out.push(cat); }
     if(cat && subcat){ if(!DB.data.subcats.out) DB.data.subcats.out = {}; if(!DB.data.subcats.out[cat]) DB.data.subcats.out[cat] = []; if(!DB.data.subcats.out[cat].includes(subcat)) DB.data.subcats.out[cat].push(subcat); }
+    
     let si = findStoreItemByName(siName); let isNew = false;
-    if(!si){ si = {id:Date.now()+Math.floor(Math.random()*1000), name:siName, unit:siUnit||'عدد', cat:cat||'', subcat:subcat||'', log:[], low:0}; DB.data.store.push(si); isNew = true; }
-    let oq = itemQty(si); si.log.push({id:'l'+Date.now(), delta:sq, dateJ, note:'خرید', type:'in'});
+    if(!si){ 
+      si = {id:Date.now()+Math.floor(Math.random()*1000), name:siName, unit:siUnit||'عدد', cat:cat||'', subcat:subcat||'', log:[], low:0}; 
+      DB.data.store.push(si); isNew = true; 
+    }
+    let oq = itemQty(si); 
+    si.log.push({id:'l'+Date.now(), delta:sq, dateJ, note: isGift ? 'اهدایی' : 'خرید', type:'in', isGift: isGift});
     msg = (isNew ? ' | 🆕' : '') + ` | 📦 ${faNum(oq)} → ${faNum(itemQty(si))}`;
   }
+  
   await DB.save(); resetTransForm(); await renderAll();
-  toast(addToStore ? '✅ ثبت'+msg : '✅ ثبت شد');
+  toast(addToStore ? (isGift ? '✅ کالای اهدایی به انبار اضافه شد' : '✅ ثبت'+msg) : '✅ ثبت شد');
 }
 async function delTrans(id){ if(!safeConfirm('حذف؟')) return; DB.data.trans = DB.data.trans.filter(t => t.id !== id); await DB.save(); renderAll(); }
 function openListRange(){ let today = todayJ(); let [ty, tm] = today.split('/').map(Number); setDateBtn('listFromBtn', `${ty}/${pad2(tm)}/01`); setDateBtn('listToBtn', today); $('listRangeBg').classList.add('show'); }
@@ -1974,15 +2086,24 @@ async function addItem(){
   let n = (inp.value||'').trim(); if(!n){ toast('نام کالا'); inp.focus(); return; }
   let ex = DB.data.store.find(s => (s.name||'').trim() === n);
   if(ex){ if(safeConfirm(`«${n}» موجود است. موجودی افزایش یابد؟`)) openQuickStockFor(ex.id); return; }
+  
   let unit = ($('sUnit').value||'').trim() || 'عدد';
   let low = parseAmount($('sLow').value);
+  let isGift = $('sIsGift').checked;
   let cat = $('sCat').value || ''; let sub = $('sSubcat').value || '';
   if(cat === '__add_new__') cat = ''; if(sub === '__add_new__') sub = ''; if(!cat) sub = '';
+  
   DB.data.store.push({id:Date.now(), name:n, unit, cat, subcat:sub, log:[], low});
-  inp.value = ''; $('sUnit').value = ''; $('sLow').value = '';
+  
+  if(isGift) {
+      let si = findStoreItemByName(n);
+      if(si) si.log.push({id:'l'+Date.now(), delta:0, dateJ: todayJ(), note: 'اهدایی', type:'in', isGift: true});
+  }
+
+  inp.value = ''; $('sUnit').value = ''; $('sLow').value = ''; $('sIsGift').checked = false;
   refreshStoreCatOptions();
   await DB.save(); await renderAll();
-  toast(`✅ «${n}» افزوده شد`);
+  toast(`✅ «${n}» ${isGift ? 'به عنوان اهدایی' : ''} افزوده شد`);
 }
 async function delItem(id){ if(!safeConfirm('حذف کالا؟')) return; DB.data.store = DB.data.store.filter(s => s.id !== id); await DB.save(); await renderAll(); }
 function openStoreMgmt(){ $('sSearch').value=''; renderStore(); $('storeMgmtBg').classList.add('show'); }
@@ -2501,6 +2622,9 @@ function bindEvents(){
   
   let bCalc = document.getElementById('calcBudgetBtn');
   if(bCalc) bCalc.addEventListener('click', calculateBudget);
+  
+  let pBtn = document.getElementById('printBudgetBtn');
+  if(pBtn) pBtn.addEventListener('click', printBudgetReport);
   
   document.addEventListener('change', (e) => {
     if(e.target && e.target.classList.contains('budget-check')) calculateBudget();
