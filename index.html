@@ -173,6 +173,12 @@
   .side-drawer-close{background:var(--chip);color:var(--bad);border:1px solid var(--line);border-radius:6px;padding:2px 8px;margin:0;width:auto;font-size:12px;cursor:pointer;flex:none}
   .side-drawer-item{display:flex;align-items:center;gap:10px;padding:11px 10px;margin:0;background:var(--chip);color:var(--txt);border:1px solid var(--line);border-radius:10px;cursor:pointer;text-align:right;font-size:13px;font-weight:bold;min-height:44px}
   .side-icon{font-size:18px;flex:none}.side-label{flex:1;text-align:right}
+  .calc-display{width:100%;min-height:62px;margin:0 0 10px;padding:12px;background:var(--chip);border:1px solid var(--line);border-radius:10px;text-align:left;direction:ltr;font-size:25px;font-weight:bold;color:var(--txt);font-variant-numeric:tabular-nums}
+  .calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+  .calc-grid button{margin:0;min-height:52px;padding:8px 4px;font-size:19px;border-radius:10px;background:var(--chip);color:var(--txt);border:1px solid var(--line)}
+  .calc-grid button.op{background:var(--pri);color:#fff;border-color:var(--pri)}
+  .calc-grid button.eq{background:var(--ok);color:#fff;border-color:var(--ok)}
+  .calc-grid button.clear{background:#fbe6e6;color:var(--bad);border-color:#f2caca}
   .back-to-trans-btn{width:100%;margin:0 0 12px 0;padding:11px 14px;background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;border:none;border-radius:10px;font-weight:bold;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
   .codeBadge{font-family:monospace;direction:ltr;display:inline-block;background:var(--chip);color:var(--pri);padding:2px 6px;border-radius:6px;font-size:12px;font-weight:bold;letter-spacing:1px}
   .noteCard{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--card)}
@@ -207,7 +213,7 @@
 <body>
 
 <div id="installBanner" class="install-banner" style="display:none; margin: 12px;">
-  <div style="flex:1;font-weight:bold;font-size:13px">📲 برنامه را روی گوشی نصب کنید تا آفلاین کار کند و راحت‌تر باز شود.</div>
+  <div style="flex:1;font-weight:bold;font-size:13px">📲 برنامه را روی گوشی نصب کنید تا آفلاین کار کند و راحتتر باز شود.</div>
   <button id="installBannerBtn" type="button">نصب</button>
 </div>
 
@@ -241,7 +247,7 @@
 
   <div class="card" id="summaryCard">
     <div class="active-acct" id="activeAcctLabel">حساب فعال</div>
-    <div class="reportHint" id="globalRangeHint">همه تراکنش‌ها</div>
+    <div class="reportHint" id="globalRangeHint">همه تراکنشها</div>
     <div class="colHead"><div>در بازه</div><div>حساب کل</div></div>
     <div class="sum2">
       <div class="srow"><div class="lbl">موجودی نقدی</div><div class="val"><b id="sumCashRange" class="pos">۰</b></div><div class="val"><b id="sumCashAll">۰</b></div></div>
@@ -302,13 +308,13 @@
       <div class="receiptPreview" id="tReceiptPreview"></div>
       <div class="row" style="margin-top:6px"><button id="addTransBtn">ثبت تراکنش</button></div>
       <div class="row" style="margin-top:6px">
-        <button class="sec" id="showTransBtn">📋 نمایش تراکنش‌ها</button>
+        <button class="sec" id="showTransBtn">📋 نمایش تراکنشها</button>
         <button class="sec" id="hideTransBtn2">🚫 عدم نمایش</button>
       </div>
     </div>
     <div class="card" id="transListCard" style="display:none">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:6px">
-        <h3 style="margin:0">📋 تراکنش‌های بازه</h3>
+        <h3 style="margin:0">📋 تراکنشهای بازه</h3>
         <button class="del" id="hideTransListBtn" style="width:auto;padding:5px 9px;font-size:12px">✕ بستن</button>
       </div>
       <div class="reportHint" id="transListRangeHint"></div>
@@ -357,7 +363,7 @@
     </div>
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <h3 style="margin:0">📋 لیست یادداشت‌ها</h3>
+        <h3 style="margin:0">📋 لیست یادداشتها</h3>
         <input id="noteSearch" placeholder="🔍 جستجو" style="max-width:150px;margin:0">
       </div>
       <div id="notesList"></div>
@@ -381,7 +387,7 @@
     </div>
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <h3 style="margin:0">🔁 لیست تکرارشونده‌ها</h3>
+        <h3 style="margin:0">🔁 لیست تکرارشوندهها</h3>
         <button class="sec mini" id="runRecBtn">▶️ اجرای دستی</button>
       </div>
       <div id="recList"></div>
@@ -396,7 +402,7 @@
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
         <button class="report-tab-btn active" data-report-tab="expense">📉 گزارش هزینه</button>
         <button class="report-tab-btn" data-report-tab="income">📈 گزارش درآمد</button>
-        <button class="report-tab-btn" data-report-tab="party">👥 گزارش طرف‌ها</button>
+        <button class="report-tab-btn" data-report-tab="party">👥 گزارش طرفها</button>
         <button class="report-tab-btn" data-report-tab="cash">💵 گردش حساب</button>
       </div>
     </div>
@@ -419,7 +425,7 @@
         <h3>📉 گزارش هزینه</h3>
         <div>
           <button class="sec mini" data-print-report="expense">🖨️ چاپ/PDF</button>
-          <button class="sec mini" data-modal-report="expense">🪟 نمایش پنجره‌ای</button>
+          <button class="sec mini" data-modal-report="expense">🪟 نمایش پنجرهای</button>
         </div>
       </div>
       <div class="reportHint" id="catHint"></div>
@@ -431,7 +437,7 @@
         <h3>📈 گزارش درآمد</h3>
         <div>
           <button class="sec mini" data-print-report="income">🖨️ چاپ/PDF</button>
-          <button class="sec mini" data-modal-report="income">🪟 نمایش پنجره‌ای</button>
+          <button class="sec mini" data-modal-report="income">🪟 نمایش پنجرهای</button>
         </div>
       </div>
       <div class="reportHint" id="inHint"></div>
@@ -440,10 +446,10 @@
 
     <div class="card report-section" data-report-section="party" style="display:none">
       <div class="report-card-head">
-        <h3>👥 گزارش طرف‌ها</h3>
+        <h3>👥 گزارش طرفها</h3>
         <div>
           <button class="sec mini" data-print-report="party">🖨️ چاپ/PDF</button>
-          <button class="sec mini" data-modal-report="party">🪟 نمایش پنجره‌ای</button>
+          <button class="sec mini" data-modal-report="party">🪟 نمایش پنجرهای</button>
         </div>
       </div>
       <div class="reportHint" id="partyHint"></div>
@@ -455,7 +461,7 @@
         <h3>💵 گردش حساب</h3>
         <div>
           <button class="sec mini" data-print-report="cash">🖨️ چاپ/PDF</button>
-          <button class="sec mini" data-modal-report="cash">🪟 نمایش پنجره‌ای</button>
+          <button class="sec mini" data-modal-report="cash">🪟 نمایش پنجرهای</button>
         </div>
       </div>
       <div class="reportHint" id="monthHint"></div>
@@ -475,7 +481,7 @@
 
     <div class="card" id="buyerCodesCard" style="display:none">
       <h3>🎫 مدیریت کدهای خریدار</h3>
-      <div class="hint" style="margin-bottom:10px">کدهای ساخته‌شده برای خریداران — دسترسی دائمی</div>
+      <div class="hint" style="margin-bottom:10px">کدهای ساختهشده برای خریداران — دسترسی دائمی</div>
       <div class="flexline" style="margin-bottom:8px">
         <input id="newBuyerCodeNote" placeholder="نام و نام خانوادگی خریدار">
         <button class="mini" id="addBuyerCodeBtn" type="button">➕ ساخت کد</button>
@@ -492,16 +498,16 @@
     </div>
 
     <div class="card">
-      <h3>☁️ همگام‌سازی ابری</h3>
-      <div class="hint" style="margin-bottom:8px">فایل انتخاب کنید (مثلاً در پوشه Google Drive یا Dropbox). هر تغییر خودکار در آن ذخیره می‌شود.</div>
+      <h3>☁️ همگامسازی ابری</h3>
+      <div class="hint" style="margin-bottom:8px">فایل انتخاب کنید (مثلاً در پوشه Google Drive یا Dropbox). هر تغییر خودکار در آن ذخیره میشود.</div>
       <div style="margin-bottom:8px">وضعیت: <span id="cloudStatus" class="cloudStatus off">متصل نیست</span></div>
-      <button class="sec" id="connectCloudBtn" style="width:100%">🔗 اتصال به فایل همگام‌سازی</button>
+      <button class="sec" id="connectCloudBtn" style="width:100%">🔗 اتصال به فایل همگامسازی</button>
       <button class="sec" id="disconnectCloudBtn" style="width:100%;margin-top:8px;display:none">🔌 قطع اتصال</button>
     </div>
 
     <div class="card" id="aboutTextCard">
       <h3>ℹ️ متن «درباره»</h3>
-      <div class="hint" style="margin-bottom:8px">متنی که در پنجره درباره نمایش داده می‌شود</div>
+      <div class="hint" style="margin-bottom:8px">متنی که در پنجره درباره نمایش داده میشود</div>
       <textarea id="aboutTextInput" placeholder="مثلاً: برنامه حسابداری خانواده، نسخه ۲.۰..."></textarea>
       <button class="sec" id="saveAboutBtn" style="width:100%;margin-top:6px">💾 ذخیره متن</button>
     </div>
@@ -529,19 +535,19 @@
     </div>
 
     <div class="card">
-      <h3>🗂️ مدیریت دسته‌ها</h3>
+      <h3>🗂️ مدیریت دستهها</h3>
       <button class="manageBtn" id="openCatMgmtBtn">🗂️ باز کردن مدیریت</button>
     </div>
 
     <div class="card">
-      <h3>💾 پشتیبان‌گیری خودکار</h3>
+      <h3>💾 پشتیبانگیری خودکار</h3>
       <div class="settingRow"><div class="lbl">پشتیبان خودکار</div><div class="switch on" id="autoBackupSwitch"></div></div>
       <div class="hint" id="autoBackupInfo"></div>
       <button class="sec" id="restoreAutoBtn">بازیابی از آخرین پشتیبان</button>
     </div>
 
     <div class="card">
-      <h3>حساب‌ها</h3>
+      <h3>حسابها</h3>
       <div class="flexline"><input id="newAcct" placeholder="نام حساب جدید"><button class="mini" id="addAcctBtn">ایجاد</button></div>
       <div id="listAcct"></div>
     </div>
@@ -563,7 +569,7 @@
 
     <div class="card">
       <h3>📲 نصب برنامه</h3>
-      <div class="hint" style="margin-bottom:8px">برای اجرای آفلاین و سریع‌تر، برنامه را نصب کنید.</div>
+      <div class="hint" style="margin-bottom:8px">برای اجرای آفلاین و سریعتر، برنامه را نصب کنید.</div>
       <button class="sec" id="installBtn">نصب روی دستگاه</button>
     </div>
 
@@ -574,7 +580,7 @@
         <div class="mut" style="margin-bottom:4px">بازیابی از فایل:</div>
         <input type="file" id="importFile" accept=".json,application/json">
       </div>
-      <button class="del" style="margin-top:8px" id="resetBtn">پاک‌کردن کل داده‌ها</button>
+      <button class="del" style="margin-top:8px" id="resetBtn">پاککردن کل دادهها</button>
     </div>
   </div>
 
@@ -587,12 +593,13 @@
   <button type="button" class="side-drawer-item" data-goto="notebook"><span class="side-icon">📝</span><span class="side-label">یادداشت</span></button>
   <button type="button" class="side-drawer-item" data-goto="recurring"><span class="side-icon">🔁</span><span class="side-label">تکرارشونده</span></button>
   <button type="button" class="side-drawer-item" data-goto="report"><span class="side-icon">📊</span><span class="side-label">گزارش</span></button>
-  <button type="button" class="side-drawer-item" data-goto="budget"><span class="side-icon">📉</span><span class="side-label">پیش‌بینی بودجه</span></button>
+  <button type="button" class="side-drawer-item" data-goto="budget"><span class="side-icon">📉</span><span class="side-label">پیشبینی بودجه</span></button>
+  <button type="button" class="side-drawer-item" data-goto="calculator"><span class="side-icon">🧮</span><span class="side-label">ماشینحساب</span></button>
   <button type="button" class="side-drawer-item" data-goto="set"><span class="side-icon">⚙️</span><span class="side-label">تنظیمات</span></button>
   <button type="button" class="side-drawer-item" data-goto="about"><span class="side-icon">ℹ️</span><span class="side-label">درباره</span></button>
 </div>
 
-<!-- مودال‌ها و فرم‌ها -->
+<!-- مودالها و فرمها -->
 <div class="modal-bg" id="licenseModalBg">
   <div class="modal" style="max-width:340px">
     <h4>🔑 ورود به برنامه</h4>
@@ -608,7 +615,7 @@
     <div class="filterLabel">شماره موبایل</div>
     <input id="guestPhone" type="tel" inputmode="numeric" placeholder="09xxxxxxxxx" maxlength="11" style="direction:ltr;text-align:left;font-family:monospace">
     <div class="hint" id="guestErr" style="color:var(--bad);min-height:16px;font-size:12px"></div>
-    <div class="actions"><button class="sec" id="guestCancelBtn">انصراف</button><button id="guestOkBtn">فعال‌سازی ۳۰ روز</button></div>
+    <div class="actions"><button class="sec" id="guestCancelBtn">انصراف</button><button id="guestOkBtn">فعالسازی ۳۰ روز</button></div>
   </div>
 </div>
 
@@ -617,10 +624,10 @@
     <h4>👑 ورود مالک / خریدار</h4>
     <div class="filterLabel">شماره موبایل</div>
     <input id="ownerPhone" type="tel" inputmode="numeric" placeholder="09xxxxxxxxx" maxlength="11" style="direction:ltr;text-align:left;font-family:monospace">
-    <div class="filterLabel">کد فعال‌سازی</div>
+    <div class="filterLabel">کد فعالسازی</div>
     <input id="ownerCode" type="text" placeholder="کد اختصاصی" autocomplete="off" style="direction:ltr;text-align:left;font-family:monospace">
     <div class="hint" id="ownerErr" style="color:var(--bad);min-height:16px;font-size:12px"></div>
-    <div class="actions"><button class="sec" id="ownerCancelBtn">انصراف</button><button id="ownerOkBtn" style="background:linear-gradient(135deg,#c97a00,#a35c00)">فعال‌سازی دائمی</button></div>
+    <div class="actions"><button class="sec" id="ownerCancelBtn">انصراف</button><button id="ownerOkBtn" style="background:linear-gradient(135deg,#c97a00,#a35c00)">فعالسازی دائمی</button></div>
   </div>
 </div>
 
@@ -630,7 +637,7 @@
     <p class="mut" style="font-size:12px">برای انتقال، این اطلاعات را کپی و در دستگاه جدید وارد کنید:</p>
     <div class="filterLabel">شماره موبایل</div>
     <input id="transferPhone" readonly style="direction:ltr;text-align:left;font-family:monospace">
-    <div class="filterLabel">کد فعال‌سازی</div>
+    <div class="filterLabel">کد فعالسازی</div>
     <input id="transferCode" readonly style="direction:ltr;text-align:left;font-family:monospace">
     <div class="actions"><button class="sec" id="transferCloseBtn">بستن</button><button id="transferCopyBtn">📋 کپی همه</button></div>
   </div>
@@ -642,7 +649,7 @@
     <div style="text-align:center;padding:8px 0">
       <div style="font-size:52px;line-height:1">🏠</div>
       <h3 style="margin:8px 0 4px;color:var(--pri);font-size:18px">حساب خانواده</h3>
-      <div class="mut" style="margin-bottom:12px">نسخه ۳.۰ (بودجه‌بندی پیشرفته)</div>
+      <div class="mut" style="margin-bottom:12px">نسخه ۳.۰ (بودجهبندی پیشرفته)</div>
     </div>
     <div id="aboutCustomText" style="font-size:13px;line-height:1.9;white-space:pre-wrap;text-align:right;padding:10px;background:var(--chip);border-radius:10px;margin-bottom:10px"></div>
     <div class="actions"><button class="sec" id="aboutCloseBtn">بستن</button><button id="aboutBackBtn">🏠 بازگشت</button></div>
@@ -652,7 +659,7 @@
 <div class="modal-bg" id="partyTransBg">
   <div class="modal" style="max-width:560px;max-height:90vh;display:flex;flex-direction:column">
     <div class="detail-head">
-      <h4 id="partyTransTitle">📋 تراکنش‌های طرف</h4>
+      <h4 id="partyTransTitle">📋 تراکنشهای طرف</h4>
       <button class="del" id="partyTransCloseBtn" style="width:auto;padding:5px 12px;flex:none">✕</button>
     </div>
     <div class="detail-toolbar">
@@ -697,7 +704,7 @@
 <div class="modal-bg" id="storeMgmtBg">
   <div class="modal" style="max-width:440px">
     <h4>📦 مدیریت کالاها</h4>
-    <input id="sSearch" placeholder="جست‌وجو...">
+    <input id="sSearch" placeholder="جستوجو...">
     <div id="listStore"></div>
     <div class="actions"><button class="sec" id="storeMgmtCloseBtn">بستن</button></div>
   </div>
@@ -707,7 +714,7 @@
   <div class="modal" style="max-width:420px">
     <h4>👤 مدیریت اشخاص</h4>
     <div class="reportHint" id="peopleRangeHint"></div>
-    <input id="pSearch" placeholder="جست‌وجو...">
+    <input id="pSearch" placeholder="جستوجو...">
     <div id="partyMgmtList"></div>
     <div class="actions"><button class="sec" id="partyMgmtCloseBtn">بستن</button></div>
   </div>
@@ -724,7 +731,7 @@
 
 <div class="modal-bg" id="catMgmtBg">
   <div class="modal" style="max-width:420px">
-    <h4>🗂️ دسته‌ها</h4>
+    <h4>🗂️ دستهها</h4>
     <div class="filterLabel">نوع</div>
     <select id="catMgmtType"><option value="out">هزینه</option><option value="in">درآمد</option></select>
     <div class="flexline" style="margin-bottom:10px"><input id="catMgmtNewName" placeholder="دسته جدید"><button class="mini" id="catMgmtAddBtn">➕</button></div>
@@ -826,7 +833,7 @@
 
 <div class="confirm-bg" id="exitBg">
   <div class="confirm">
-    <p>قبل از خروج، پشتیبان تهیه می‌کنید؟</p>
+    <p>قبل از خروج، پشتیبان تهیه میکنید؟</p>
     <div class="actions"><button class="sec" id="exitYesBtn">بله</button><button class="del" id="exitNoBtn">خیر</button><button class="sec" id="exitCancelBtn">انصراف</button></div>
   </div>
 </div>
@@ -834,7 +841,7 @@
 <div class="modal-bg" id="storePickerBg">
   <div class="modal" style="max-width:400px">
     <h4>📦 انتخاب کالا از انبار</h4>
-    <input id="storePickerSearch" placeholder="جست‌وجو...">
+    <input id="storePickerSearch" placeholder="جستوجو...">
     <div id="storePickerList" style="max-height:50vh;overflow-y:auto"></div>
     <div class="actions"><button class="sec" id="storePickerCloseBtn">بستن</button></div>
   </div>
@@ -854,16 +861,37 @@
 <div class="modal-bg" id="budgetModalBg">
   <div class="modal" style="max-width:500px;max-height:90vh;display:flex;flex-direction:column">
     <div class="detail-head">
-      <h4 id="budgetTitle">📊 پیش‌بینی بودجه هوشمند</h4>
+      <h4 id="budgetTitle">📊 پیشبینی بودجه هوشمند</h4>
       <button class="del" id="budgetCloseBtn" style="width:auto;padding:5px 12px;flex:none">✕</button>
     </div>
     <div style="overflow-y:auto;flex:1;padding-left:4px">
-      <p class="mut" style="font-size:12px;margin-bottom:10px">این بخش بر اساس میانگین هزینه‌های ۳ ماه گذشته شما و با در نظر گرفتن موجودی انبار، بودجه ماه آینده را پیش‌بینی می‌کند.</p>
+      <p class="mut" style="font-size:12px;margin-bottom:10px">این بخش بر اساس میانگین هزینههای ۳ ماه گذشته شما و با در نظر گرفتن موجودی انبار، بودجه ماه آینده را پیشبینی میکند.</p>
       <div id="budgetForm" style="display:flex;flex-direction:column;gap:6px"></div>
       <button id="calcBudgetBtn" style="margin-top:14px;background:linear-gradient(135deg,#1e9e5a,#157a44);color:#fff;padding:12px;border-radius:8px;font-weight:bold">🔄 محاسبه مجدد بودجه</button>
       <button id="printBudgetBtn" style="margin-top:8px;background:var(--pri);color:#fff;padding:12px;border-radius:8px;font-weight:bold">🖨️ چاپ / ذخیره PDF</button>
       <div id="budgetResult" style="margin-top:14px;padding:12px;background:var(--chip);border-radius:10px;display:none"></div>
     </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="calculatorBg">
+  <div class="modal" style="max-width:360px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px">
+      <h4 style="margin:0">🧮 ماشینحساب</h4>
+      <button type="button" class="del" id="calcCloseBtn" style="width:auto;margin:0">بستن</button>
+    </div>
+    <div class="calc-display" id="calcDisplay" aria-live="polite">۰</div>
+    <div class="calc-grid" id="calcKeys">
+      <button type="button" class="clear" data-calc="clear">C</button>
+      <button type="button" data-calc="back">⌫</button>
+      <button type="button" class="op" data-calc="(" >(</button>
+      <button type="button" class="op" data-calc=")">)</button>
+      <button type="button" data-calc="7">۷</button><button type="button" data-calc="8">۸</button><button type="button" data-calc="9">۹</button><button type="button" class="op" data-calc="/">÷</button>
+      <button type="button" data-calc="4">۴</button><button type="button" data-calc="5">۵</button><button type="button" data-calc="6">۶</button><button type="button" class="op" data-calc="*">×</button>
+      <button type="button" data-calc="1">۱</button><button type="button" data-calc="2">۲</button><button type="button" data-calc="3">۳</button><button type="button" class="op" data-calc="-">−</button>
+      <button type="button" data-calc="0">۰</button><button type="button" data-calc=".">.</button><button type="button" class="eq" data-calc="=">=</button><button type="button" class="op" data-calc="+">+</button>
+    </div>
+    <div class="hint" style="margin-top:9px;text-align:center">عملیات چهارگانه و پرانتز پشتیبانی میشود.</div>
   </div>
 </div>
 
@@ -961,11 +989,11 @@ const IDB = {
   async del(key, store){ if(!this.db) await this.open(); store = store || IDB_STORE; return new Promise((res, rej) => { let tx = this.db.transaction(store, 'readwrite'); let req = tx.objectStore(store).delete(key); req.onsuccess = () => res(); req.onerror = () => rej(req.error); }); }
 };
 
-const DEFAULT_CATS = { out:['خواربار','اجاره','قبوض','درمان','حمل‌ونقل','تفریح','هدیه','سایر'], in:['حقوق','فروش','هدیه دریافتی','سود','سایر'] };
+const DEFAULT_CATS = { out:['خواربار','اجاره','قبوض','درمان','حملونقل','تفریح','هدیه','سایر'], in:['حقوق','فروش','هدیه دریافتی','سود','سایر'] };
 const AUTO_BACKUP_KEY = 'familyAccAutoBackups';
 
 function defaultData(){
-  return { schema: 20, accounts: [{id:'a'+Date.now(), name:'خانوار'}], active: null, trans: [], people: [], store: [], parties: [], buyerCodes: [], notes: [], recurring: [], cats: {out:[...DEFAULT_CATS.out], in:[...DEFAULT_CATS.in]}, subcats: {out:{}, in:{}}, reportFilter: {fromJ:null, toJ:null}, ui: {font:'Vazirmatn', fs:14, theme:'light', lang:'fa'}, autoBackup: true, aboutText: 'حساب خانواده — برنامهٔ مدیریت مالی خانواده.\n\nنسخه ۳.۰ (بودجه‌بندی پیشرفته)', recurringLastRun: {} };
+  return { schema: 20, accounts: [{id:'a'+Date.now(), name:'خانوار'}], active: null, trans: [], people: [], store: [], parties: [], buyerCodes: [], notes: [], recurring: [], cats: {out:[...DEFAULT_CATS.out], in:[...DEFAULT_CATS.in]}, subcats: {out:{}, in:{}}, reportFilter: {fromJ:null, toJ:null}, ui: {font:'Vazirmatn', fs:14, theme:'light', lang:'fa'}, autoBackup: true, aboutText: 'حساب خانواده — برنامهٔ مدیریت مالی خانواده.\n\nنسخه ۳.۰ (بودجهبندی پیشرفته)', recurringLastRun: {} };
 }
 
 const DB = {
@@ -1024,7 +1052,7 @@ function migrate(d){
   out.store.forEach(s => { if(!Array.isArray(s.log)) s.log = []; if(typeof s.low !== 'number') s.low = 0; if(typeof s.cat !== 'string') s.cat = ''; if(typeof s.subcat !== 'string') s.subcat = ''; });
   return out;
 }
-function migrateV19toV20(d){ d.schema = 20; if(!Array.isArray(d.notes)) d.notes = []; if(!Array.isArray(d.recurring)) d.recurring = []; if(!d.aboutText) d.aboutText = 'حساب خانواده — نسخه ۳.۰ (بودجه‌بندی پیشرفته)'; if(!d.recurringLastRun) d.recurringLastRun = {}; return d; }
+function migrateV19toV20(d){ d.schema = 20; if(!Array.isArray(d.notes)) d.notes = []; if(!Array.isArray(d.recurring)) d.recurring = []; if(!d.aboutText) d.aboutText = 'حساب خانواده — نسخه ۳.۰ (بودجهبندی پیشرفته)'; if(!d.recurringLastRun) d.recurringLastRun = {}; return d; }
 
 async function doAutoBackup(){
   try{
@@ -1076,7 +1104,7 @@ async function pressPin(d){
         let fails = getPinFails() + 1; setPinFails(fails);
         let remaining = 10 - fails;
         if(remaining <= 0){
-          $('lockErr').textContent = '۱۰ بار اشتباه — پاک‌سازی...';
+          $('lockErr').textContent = '۱۰ بار اشتباه — پاکسازی...';
           try{ localStorage.removeItem(PIN_KEY); localStorage.removeItem(PIN_FAIL_KEY); }catch(e){}
           setTimeout(() => { try{ localStorage.removeItem('familyAccLicense'); }catch(e){} location.reload(); }, 1500);
           return;
@@ -1120,7 +1148,7 @@ function showLicenseScreen(){
   let scr = $('licenseScreen'); if(scr) scr.classList.add('show');
   let l = getLicense(), expMsg = $('licExpiredMsg'), sub = $('licSub');
   if(l && l.type === 'guest' && l.v === APP_VERSION){ if(expMsg){ expMsg.style.display='block'; expMsg.textContent='⚠️ اعتبار ۳۰ روزه شما به پایان رسیده'; } if(sub) sub.textContent = 'برای ادامه، مجدداً وارد شوید'; }
-  else if(l && l.v !== APP_VERSION){ if(expMsg){ expMsg.style.display='block'; expMsg.textContent='🔄 نسخه جدید — لطفاً مجدداً وارد شوید'; } if(sub) sub.textContent = 'به‌روزرسانی انجام شده'; }
+  else if(l && l.v !== APP_VERSION){ if(expMsg){ expMsg.style.display='block'; expMsg.textContent='🔄 نسخه جدید — لطفاً مجدداً وارد شوید'; } if(sub) sub.textContent = 'بهروزرسانی انجام شده'; }
   else if(l && l.type === 'buyer'){ if(expMsg){ expMsg.style.display='block'; expMsg.textContent='⚠️ کد خریدار حذف شده است'; } if(sub) sub.textContent = 'با مالک تماس بگیرید'; }
   else { if(expMsg) expMsg.style.display='none'; if(sub) sub.textContent = 'برای استفاده، وارد شوید'; }
 }
@@ -1205,7 +1233,7 @@ async function setupPWA(){
 
   const manifest = {
     name: "حساب خانواده",
-    short_name: "حساب‌خانواده",
+    short_name: "حسابخانواده",
     start_url: "./index.html",
     display: "standalone",
     background_color: "#f5f7fa",
@@ -1242,7 +1270,7 @@ async function setupPWA(){
       installPrompt = null;
       if(installBanner) installBanner.style.display = 'none';
     } else {
-      toast('برنامه از قبل نصب شده است یا مرورگر شما از نصب خودکار پشتیبانی نمی‌کند. از منوی مرورگر گزینه «نصب برنامه» یا «افزودن به صفحه اصلی» را انتخاب کنید.');
+      toast('برنامه از قبل نصب شده است یا مرورگر شما از نصب خودکار پشتیبانی نمیکند. از منوی مرورگر گزینه «نصب برنامه» یا «افزودن به صفحه اصلی» را انتخاب کنید.');
     }
   };
 
@@ -1274,7 +1302,7 @@ function openBudgetModal() {
   let now = new Date();
   let threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
   
-  // ۱. محاسبه میانگین درآمدها (فقط دریافتی‌های عادی، بدون طرف حساب)
+  // ۱. محاسبه میانگین درآمدها (فقط دریافتیهای عادی، بدون طرف حساب)
   let totalIncome = DB.data.trans.filter(t => {
       if(t.acct !== DB.data.active || t.type !== 'in' || t.partyId) return false;
       let [jy, jm, jd] = t.dateJ.split('/').map(Number);
@@ -1284,7 +1312,7 @@ function openBudgetModal() {
   }).reduce((s, t) => s + t.amount, 0);
   let avgIncome = Math.round(totalIncome / 3);
 
-  // ۲. محاسبه میانگین هزینه‌ها (فقط هزینه‌های عادی، بدون طرف حساب)
+  // ۲. محاسبه میانگین هزینهها (فقط هزینههای عادی، بدون طرف حساب)
   let expCats = [...new Set(DB.data.trans.filter(t => t.acct === DB.data.active && t.type === 'out' && !t.partyId).map(t => t.cat || 'بدون دسته'))];
   
   let html = `<div style="background:var(--chip);padding:10px;border-radius:8px;margin-bottom:10px;text-align:center">
@@ -1293,7 +1321,7 @@ function openBudgetModal() {
   </div>`;
 
   if(!expCats.length) { 
-    $('budgetForm').innerHTML = html + '<div class="mut">سابقه هزینه‌ای ثبت نکرده‌اید.</div>'; 
+    $('budgetForm').innerHTML = html + '<div class="mut">سابقه هزینهای ثبت نکردهاید.</div>'; 
     return; 
   }
   
@@ -1370,15 +1398,15 @@ function calculateBudget(incomeAmount) {
   let diffHtml = '';
   if (diff >= 0) {
       diffHtml = `<div style="font-size:16px;font-weight:bold;color:var(--ok);margin:6px 0">مازاد: ${fmt(diff)} تومان</div>
-      <div class="mut" style="font-size:11px">شما این مقدار پول اضافه دارید که می‌توانید پس‌انداز کنید.</div>`;
+      <div class="mut" style="font-size:11px">شما این مقدار پول اضافه دارید که میتوانید پسانداز کنید.</div>`;
   } else {
       diffHtml = `<div style="font-size:16px;font-weight:bold;color:var(--bad);margin:6px 0">کسری: ${fmt(Math.abs(diff))} تومان</div>
-      <div class="mut" style="font-size:11px">هزینه‌های شما بیشتر از درآمدتان است. لطفاً برخی تیک‌ها را بردارید یا هزینه‌ها را کاهش دهید.</div>`;
+      <div class="mut" style="font-size:11px">هزینههای شما بیشتر از درآمدتان است. لطفاً برخی تیکها را بردارید یا هزینهها را کاهش دهید.</div>`;
   }
 
   res.innerHTML = `
     <div style="text-align:center;margin-bottom:10px">
-      <div class="mut" style="font-size:12px">درآمد ماهانه: <b>${fmt(avgIncome)}</b> | هزینه‌های انتخابی: <b>${fmt(totalExp)}</b></div>
+      <div class="mut" style="font-size:12px">درآمد ماهانه: <b>${fmt(avgIncome)}</b> | هزینههای انتخابی: <b>${fmt(totalExp)}</b></div>
       ${diffHtml}
     </div>
   `;
@@ -1411,7 +1439,7 @@ function printBudgetReport() {
   let diffColor = diff >= 0 ? '#1e9e5a' : '#d64545';
 
   let html = `<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8">
-    <title>گزارش پیش‌بینی بودجه</title>
+    <title>گزارش پیشبینی بودجه</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
     <style>
       body{font-family:Vazirmatn,Tahoma,sans-serif;padding:24px;color:#222;background:#fff}
@@ -1433,7 +1461,7 @@ function printBudgetReport() {
     <div class="header">
       <div class="logo">🏠</div>
       <h1>حساب خانواده</h1>
-      <h3>📊 گزارش پیش‌بینی بودجه</h3>
+      <h3>📊 گزارش پیشبینی بودجه</h3>
       <div class="sub">حساب: ${esc(DB.data.accounts.find(a => a.id === DB.data.active)?.name || '—')} · تاریخ چاپ: ${todayJ()}</div>
     </div>
     
@@ -1442,13 +1470,13 @@ function printBudgetReport() {
         <tr><th>دسته هزینه</th><th>بودجه پیشنهادی (تومان)</th></tr>
       </thead>
       <tbody>
-        ${rows || '<tr><td colspan="2">هیچ هزینه‌ای انتخاب نشده است</td></tr>'}
+        ${rows || '<tr><td colspan="2">هیچ هزینهای انتخاب نشده است</td></tr>'}
       </tbody>
     </table>
 
     <div class="summary">
       <div class="box"><div class="l">میانگین درآمد ماهانه</div><div class="v" style="color:#1e9e5a">${fmt(avgIncome)}</div></div>
-      <div class="box"><div class="l">مجموع هزینه‌های انتخابی</div><div class="v bad">${fmt(totalExp)}</div></div>
+      <div class="box"><div class="l">مجموع هزینههای انتخابی</div><div class="v bad">${fmt(totalExp)}</div></div>
       <div class="box"><div class="l">${diffLabel}</div><div class="v" style="color:${diffColor}">${fmt(Math.abs(diff))}</div></div>
     </div>
 
@@ -1457,13 +1485,13 @@ function printBudgetReport() {
     </body></html>`;
 
   let w = window.open('', '_blank');
-  if(!w){ toast('پاپ‌آپ را آزاد کنید'); return; }
+  if(!w){ toast('پاپآپ را آزاد کنید'); return; }
   w.document.write(html); w.document.close();
 }
 
 let syncFileHandle = null;
 async function connectCloud(){
-  if(!window.showSaveFilePicker){ toast('مرورگر پشتیبانی نمی‌کند'); return; }
+  if(!window.showSaveFilePicker){ toast('مرورگر پشتیبانی نمیکند'); return; }
   try{ let handle = await window.showSaveFilePicker({suggestedName: 'family-sync.json', types: [{description: 'JSON', accept: {'application/json': ['.json']}}]}); syncFileHandle = handle; await IDB.set('main', handle, 'syncHandle').catch(()=>{}); await writeSyncFile(); updateCloudStatus(); toast('✅ متصل شد'); }
   catch(e){ if(e.name !== 'AbortError') toast('خطا'); }
 }
@@ -1493,7 +1521,7 @@ function isLow(s){ return (s.low||0) > 0 && itemQty(s) <= s.low; }
 function findStoreItemByName(n){ n = (n||'').trim(); if(!n) return null; return DB.data.store.find(s => (s.name||'').trim() === n); }
 function getFilteredTrans(){ return DB.data.trans.filter(t => t.acct === DB.data.active && inRangeJ(t.dateJ)); }
 function getAllTrans(){ return DB.data.trans.filter(t => t.acct === DB.data.active); }
-function rangeLabel(){ let f = DB.data.reportFilter || {}; if(f.fromJ && f.toJ) return `از ${f.fromJ} تا ${f.toJ}`; if(f.fromJ) return `از ${f.fromJ}`; if(f.toJ) return `تا ${f.toJ}`; return 'همه تراکنش‌ها'; }
+function rangeLabel(){ let f = DB.data.reportFilter || {}; if(f.fromJ && f.toJ) return `از ${f.fromJ} تا ${f.toJ}`; if(f.fromJ) return `از ${f.fromJ}`; if(f.toJ) return `تا ${f.toJ}`; return 'همه تراکنشها'; }
 function transCashDelta(t){ if(!t) return 0; return t.type === 'in' ? (t.amount||0) : -(t.amount||0); }
 function computePartyNets(list){ let n = {}; list.forEach(t => { if(!t.partyId) return; if(!n[t.partyId]) n[t.partyId] = 0; if(t.type === 'in') n[t.partyId] += t.amount; else n[t.partyId] -= t.amount; }); return n; }
 function parseAmount(s){ let v = String(s||'').replace(/[^\d۰-۹]/g,'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)); return +(v||0); }
@@ -1607,7 +1635,7 @@ function renderAccordion(type, rList, aList, container){
       let lbl = s===''?'بدون زیردسته':esc(s);
       return `<div class="acc-sub" data-cat-sub="${type}|||${esc(cat)}|||${esc(s)}" title="نمایش گزارش ${lbl}"><span class="sub-name">↳ ${lbl} <span class="mut" style="font-size:10px">📊</span></span><span class="sub-nums"><span class="${cls}">${fmt(rSub)}</span><span class="mut">/</span><span class="${cls}">${fmt(aSub)}</span></span></div>`;
     }).join('') : '<div class="mut" style="padding:6px 4px;font-size:12px">—</div>';
-    return `<div class="acc-cat"><div class="acc-header" data-cat-report="${type}|||${esc(cat)}" title="کلیک برای گزارش تفصیلی"><span class="acc-arrow" title="باز/بسته کردن زیردسته‌ها">▶</span><span class="acc-name">📁 ${esc(cat)} (${faNum(c)})</span><span class="acc-nums"><span class="${cls}">${fmt(rC)}</span><span class="mut">/</span><span class="${cls}">${fmt(aC)}</span></span><span class="mut" style="font-size:10px;flex:none">📊</span></div><div class="acc-body">${subs}</div></div>`;
+    return `<div class="acc-cat"><div class="acc-header" data-cat-report="${type}|||${esc(cat)}" title="کلیک برای گزارش تفصیلی"><span class="acc-arrow" title="باز/بسته کردن زیردستهها">▶</span><span class="acc-name">📁 ${esc(cat)} (${faNum(c)})</span><span class="acc-nums"><span class="${cls}">${fmt(rC)}</span><span class="mut">/</span><span class="${cls}">${fmt(aC)}</span></span><span class="mut" style="font-size:10px;flex:none">📊</span></div><div class="acc-body">${subs}</div></div>`;
   }).join('');
   container.querySelectorAll('.acc-cat').forEach(row => {
     let h = row.querySelector('.acc-header');
@@ -1932,7 +1960,7 @@ async function catDetailDelete(){
   let {type, cat} = catDetailCtx;
   if(!cat){ toast('قابل حذف نیست'); return; }
   let cnt = DB.data.trans.filter(t => t.type === type && (t.cat||'') === cat).length;
-  if(!safeConfirm('حذف دسته «' + cat + '»؟\n\n' + faNum(cnt) + ' تراکنش بدون دسته می‌شوند (حذف نمی‌شوند).')) return;
+  if(!safeConfirm('حذف دسته «' + cat + '»؟\n\n' + faNum(cnt) + ' تراکنش بدون دسته میشوند (حذف نمیشوند).')) return;
   DB.data.cats[type] = (DB.data.cats[type]||[]).filter(c => c !== cat);
   if(DB.data.subcats[type]) delete DB.data.subcats[type][cat];
   DB.data.trans.forEach(t => { if(t.type === type && t.cat === cat){ t.cat = ''; t.subcat = ''; } });
@@ -2000,7 +2028,7 @@ async function partyDetailDelete(){
   let p = DB.data.parties.find(x => String(x.id) === String(partyDetailId));
   if(!p) return;
   let cnt = DB.data.trans.filter(t => String(t.partyId) === String(p.id)).length;
-  if(!safeConfirm('حذف طرف «' + p.name + '»؟\n\n' + faNum(cnt) + ' تراکنش بدون طرف می‌شوند (حذف نمی‌شوند).')) return;
+  if(!safeConfirm('حذف طرف «' + p.name + '»؟\n\n' + faNum(cnt) + ' تراکنش بدون طرف میشوند (حذف نمیشوند).')) return;
   DB.data.parties = DB.data.parties.filter(x => String(x.id) !== String(p.id));
   DB.data.trans.forEach(t => { if(String(t.partyId) === String(p.id)) t.partyId = ''; });
   await DB.save();
@@ -2062,7 +2090,7 @@ function printDetailReport(title, list, hint){
     <script>setTimeout(()=>{window.print();}, 500);<\/script>
     </body></html>`;
   let w = window.open('', '_blank');
-  if(!w){ toast('پاپ‌آپ را آزاد کنید'); return; }
+  if(!w){ toast('پاپآپ را آزاد کنید'); return; }
   w.document.write(html); w.document.close();
 }
 
@@ -2158,7 +2186,7 @@ function renderCatMgmtList(){
   let el = $('catMgmtList'); if(!el) return;
   let t = $('catMgmtType').value;
   let cats = DB.data.cats[t]||[];
-  if(!cats.length){ el.innerHTML = '<div class="mut">دسته‌ای نیست</div>'; return; }
+  if(!cats.length){ el.innerHTML = '<div class="mut">دستهای نیست</div>'; return; }
   el.innerHTML = cats.map(c => {
     let subs = (DB.data.subcats[t] && DB.data.subcats[t][c]) || [];
     let chips = subs.length ? subs.map(s => `<span class="subcat-chip"><span class="rm" data-subdel="${t}|||${c}|||${s}">✕</span>${esc(s)}</span>`).join('') : '<span class="mut">—</span>';
@@ -2269,7 +2297,7 @@ async function runRecurring(){
 }
 
 function getReportContentHTML(type){
-  let map = { expense: { title: '📉 گزارش هزینه', container: 'reportCat', hint: 'catHint' }, income: { title: '📈 گزارش درآمد', container: 'reportInCat', hint: 'inHint' }, party: { title: '👥 گزارش طرف‌ها', container: 'reportParty', hint: 'partyHint' }, cash: { title: '💵 گردش حساب', container: 'reportMonth', hint: 'monthHint' } };
+  let map = { expense: { title: '📉 گزارش هزینه', container: 'reportCat', hint: 'catHint' }, income: { title: '📈 گزارش درآمد', container: 'reportInCat', hint: 'inHint' }, party: { title: '👥 گزارش طرفها', container: 'reportParty', hint: 'partyHint' }, cash: { title: '💵 گردش حساب', container: 'reportMonth', hint: 'monthHint' } };
   let info = map[type];
   if(!info) return null;
   let hintEl = $(info.hint), contentEl = $(info.container);
@@ -2325,7 +2353,7 @@ function printReport(type){
     <script>setTimeout(()=>{window.print();}, 500);<\/script>
     </body></html>`;
   let w = window.open('', '_blank');
-  if(!w){ toast('پاپ‌آپ را آزاد کنید'); return; }
+  if(!w){ toast('پاپآپ را آزاد کنید'); return; }
   w.document.write(html); w.document.close();
 }
 function showReportModal(type){
@@ -2345,7 +2373,7 @@ function updateAutoBackupUI(){
   let info = $('autoBackupInfo'); if(!info) return;
   if(!DB.data.autoBackup){ info.textContent = '⚠️ پشتیبان خودکار غیرفعال است'; info.style.color = 'var(--bad)'; return; }
   let arr = listAutoBackups();
-  if(!arr.length){ info.textContent = 'هنوز پشتیبانی ذخیره نشده — با اولین تغییر ایجاد می‌شود'; info.style.color = 'var(--mut)'; return; }
+  if(!arr.length){ info.textContent = 'هنوز پشتیبانی ذخیره نشده — با اولین تغییر ایجاد میشود'; info.style.color = 'var(--mut)'; return; }
   let last = arr[arr.length - 1];
   let date = last.t ? new Date(last.t).toLocaleString('fa-IR', {dateStyle:'short', timeStyle:'short'}) : 'نامشخص';
   let size = last.data ? Math.round((String(last.data).length / 1024) * 10) / 10 : 0;
@@ -2425,7 +2453,7 @@ function importBackup(ev){
       catch(parseErr){ console.error('[Import] JSON parse failed:', parseErr); toast('⚠️ فایل JSON معتبر نیست'); if(ev.target) ev.target.value = ''; return; }
       if(d && typeof d === 'object' && d.data && typeof d.data === 'string'){ try{ d = JSON.parse(d.data); }catch(e){} }
       if(!d || !Array.isArray(d.accounts) || !d.accounts.length){ console.error('[Import] Invalid structure:', d); toast('⚠️ ساختار فایل نامعتبر است'); if(ev.target) ev.target.value = ''; return; }
-      if(!safeConfirm('داده‌های فعلی با محتوای فایل جایگزین شوند؟\n\n' + d.accounts.length + ' حساب · ' + (d.trans||[]).length + ' تراکنش')){ if(ev.target) ev.target.value = ''; return; }
+      if(!safeConfirm('دادههای فعلی با محتوای فایل جایگزین شوند؟\n\n' + d.accounts.length + ' حساب · ' + (d.trans||[]).length + ' تراکنش')){ if(ev.target) ev.target.value = ''; return; }
       DB.data = migrate(d);
       if(!DB.data.accounts.find(a => a.id === DB.data.active)){ DB.data.active = DB.data.accounts[0].id; }
       await DB.save();
@@ -2458,7 +2486,7 @@ async function restoreAutoBackup(){
 }
 
 function resetAll(){ if(!safeConfirm('همه داده پاک شوند؟')) return; (async () => { try{ await IDB.del('main'); }catch(e){} try{ localStorage.removeItem('familyAcc'); localStorage.removeItem(AUTO_BACKUP_KEY); }catch(e){} location.reload(); })(); }
-function showAbout(){ let c = $('aboutCustomText'); if(c) c.textContent = DB.data.aboutText || 'حساب خانواده — نسخه ۳.۰ (بودجه‌بندی پیشرفته)'; $('aboutBg').classList.add('show'); }
+function showAbout(){ let c = $('aboutCustomText'); if(c) c.textContent = DB.data.aboutText || 'حساب خانواده — نسخه ۳.۰ (بودجهبندی پیشرفته)'; $('aboutBg').classList.add('show'); }
 
 function updateTransStoreLink(){ let mt = $('tMainType'); if(!mt) return; let eff = mt.value; if(eff === 'party'){ let pd = $('tPartyDir'); if(pd) eff = pd.value; } let isOut = eff === 'out'; let box = $('tStoreLinkBox'); if(box) box.style.display = isOut ? 'block' : 'none'; if(!isOut){ if($('tAddToStore')) $('tAddToStore').checked = false; if($('tStoreFields')) $('tStoreFields').style.display = 'none'; } }
 function updateTransStoreFields(){ let chk = $('tAddToStore'), box = $('tStoreFields'); if(!chk || !box) return; if(chk.checked){ box.style.display = 'block'; updateStoreItemPreview(); } else box.style.display = 'none'; }
@@ -2491,6 +2519,35 @@ function setReportTab(type){
   document.querySelectorAll('[data-report-section]').forEach(sec => { sec.style.display = sec.getAttribute('data-report-section') === type ? 'block' : 'none'; });
 }
 
+let calcExpression = '';
+let calcJustEvaluated = false;
+function showCalcDisplay(value){ const el=$('calcDisplay'); if(el) el.textContent = value ? faNum(value) : '۰'; }
+function calculateExpression(input){
+  const src=String(input).replace(/[۰-۹]/g,d=>String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d))).replace(/[٠-٩]/g,d=>String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))).replace(/٫/g,'.').replace(/×/g,'*').replace(/[÷]/g,'/').replace(/[−]/g,'-').replace(/\s+/g,'');
+  const tokens=src.match(/(?:\d+(?:\.\d*)?|\.\d+)|[()+\-*/]/g)||[];
+  if(!tokens.length || tokens.join('')!==src) throw new Error('عبارت نامعتبر است');
+  let i=0;
+  function primary(){
+    if(tokens[i]==='+'){i++;return primary();}
+    if(tokens[i]==='-'){i++;return -primary();}
+    if(tokens[i]==='('){i++;let v=addSub();if(tokens[i]!==')')throw new Error('پرانتز ناقص است');i++;return v;}
+    const t=tokens[i++];if(t===undefined || !/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(t))throw new Error('عدد نامعتبر است');
+    const n=Number(t);if(!Number.isFinite(n))throw new Error('عدد نامعتبر است');return n;
+  }
+  function mulDiv(){let v=primary();while(tokens[i]==='*'||tokens[i]==='/'){const op=tokens[i++],r=primary();if(op==='/'&&r===0)throw new Error('تقسیم بر صفر مجاز نیست');v=op==='*'?v*r:v/r;}return v;}
+  function addSub(){let v=mulDiv();while(tokens[i]==='+'||tokens[i]==='-'){const op=tokens[i++],r=mulDiv();v=op==='+'?v+r:v-r;}return v;}
+  const result=addSub();if(i!==tokens.length||!Number.isFinite(result))throw new Error('عبارت نامعتبر است');
+  return Number(result.toPrecision(12)).toString();
+}
+function handleCalcKey(key){
+  if(key==='clear'){calcExpression='';calcJustEvaluated=false;showCalcDisplay('');return;}
+  if(key==='back'){calcExpression=calcExpression.slice(0,-1);calcJustEvaluated=false;showCalcDisplay(calcExpression);return;}
+  if(key==='='){if(!calcExpression)return;try{calcExpression=calculateExpression(calcExpression);calcJustEvaluated=true;showCalcDisplay(calcExpression);}catch(e){showCalcDisplay(e.message);calcJustEvaluated=false;}return;}
+  if(calcJustEvaluated){if(/[0-9.]/.test(key))calcExpression='';calcJustEvaluated=false;}
+  calcExpression+=key;showCalcDisplay(calcExpression);
+}
+function openCalculator(){calcExpression='';calcJustEvaluated=false;showCalcDisplay('');$('calculatorBg').classList.add('show');}
+
 function bindEvents(){
   const on = (id, ev, fn) => { let el = $(id); if(el) el.addEventListener(ev, fn); };
 
@@ -2504,7 +2561,7 @@ function bindEvents(){
   on('ownerOkBtn','click', () => { let p = ($('ownerPhone').value||'').trim(), c = ($('ownerCode').value||'').trim(); let r = activateOwnerOrBuyer(p, c); if(r.ok) completeActivation(); });
   ['licenseModalBg','guestFormBg','ownerFormBg'].forEach(id => { let el = $(id); if(!el) return; el.addEventListener('click', e => { if(e.target === el) el.classList.remove('show'); }); });
 
-  on('logoutBtn','click', () => { if(!safeConfirm('از حساب خارج می‌شوید؟')) return; removeLicense(); location.reload(); });
+  on('logoutBtn','click', () => { if(!safeConfirm('از حساب خارج میشوید؟')) return; removeLicense(); location.reload(); });
   on('transferLicenseBtn','click', () => { let l = getLicense(); if(!l){ toast('لایسنسی نیست'); return; } $('transferPhone').value = l.phone || ''; $('transferCode').value = l.code || ''; $('transferLicenseBg').classList.add('show'); });
   on('transferCloseBtn','click', () => $('transferLicenseBg').classList.remove('show'));
   on('transferCopyBtn','click', async () => { let t = `شماره: ${$('transferPhone').value}\nکد: ${$('transferCode').value}`; await copyText(t); toast('📋 کپی شد'); });
@@ -2614,8 +2671,19 @@ function bindEvents(){
     closeSideDrawer(); 
     if(t === 'about'){ showAbout(); } 
     else if(t === 'budget'){ openBudgetModal(); }
+    else if(t === 'calculator'){ openCalculator(); }
     else goToTab(t); 
   }));
+
+  on('calcCloseBtn','click', () => $('calculatorBg').classList.remove('show'));
+  on('calcKeys','click', e => { const b=e.target.closest('[data-calc]'); if(b) handleCalcKey(b.getAttribute('data-calc')); });
+  on('calculatorBg','click', e => { if(e.target === $('calculatorBg')) $('calculatorBg').classList.remove('show'); });
+  on('calculatorBg','keydown', e => {
+    if(e.key==='Enter'||e.key==='='){e.preventDefault();handleCalcKey('=');}
+    else if(e.key==='Escape') $('calculatorBg').classList.remove('show');
+    else if(e.key==='Backspace'){e.preventDefault();handleCalcKey('back');}
+    else if(/^[0-9.+*/()\-]$/.test(e.key)) handleCalcKey(e.key);
+  });
 
   let bClose = document.getElementById('budgetCloseBtn');
   if(bClose) bClose.addEventListener('click', () => $('budgetModalBg').classList.remove('show'));
