@@ -594,7 +594,8 @@
   <button type="button" class="side-drawer-item" data-goto="recurring"><span class="side-icon">🔁</span><span class="side-label">تکرارشونده</span></button>
   <button type="button" class="side-drawer-item" data-goto="report"><span class="side-icon">📊</span><span class="side-label">گزارش</span></button>
   <button type="button" class="side-drawer-item" data-goto="budget"><span class="side-icon">📉</span><span class="side-label">پیشبینی بودجه</span></button>
-  <button type="button" class="side-drawer-item" data-goto="calculator"><span class="side-icon">🧮</span><span class="side-label">ماشینحساب</span></button>
+  <button type="button" class="side-drawer-item" data-goto="calculator"><span class="side-icon">🧮</span><span class="side-label">ماشین حساب</span></button>
+  <button type="button" class="side-drawer-item" data-goto="bankpay"><span class="side-icon">🏦</span><span class="side-label">پرداخت بانکی</span></button>
   <button type="button" class="side-drawer-item" data-goto="set"><span class="side-icon">⚙️</span><span class="side-label">تنظیمات</span></button>
   <button type="button" class="side-drawer-item" data-goto="about"><span class="side-icon">ℹ️</span><span class="side-label">درباره</span></button>
 </div>
@@ -874,10 +875,54 @@
   </div>
 </div>
 
+<div class="modal-bg" id="bankPayBg">
+  <div class="modal" style="max-width:380px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px">
+      <h4 style="margin:0">🏦 پرداخت بانکی</h4>
+      <button type="button" class="del" id="bankPayCloseBtn" style="width:auto;margin:0">بستن</button>
+    </div>
+    <div class="filterLabel">۱) انتخاب بانک</div>
+    <select id="bankPaySelect" style="width:100%;margin-bottom:8px"></select>
+    <div class="filterLabel">پیوند رسمی همراه‌بانک (در صورت وجود)</div>
+    <div class="hint" style="margin-bottom:6px">پیوندی را وارد کنید که بانک برای بازشدن برنامه از طریق لینک یا پیوند عمیق ارائه کرده باشد. نشانی عادی وب‌سایت لزوماً برنامه بانکی را باز نمی‌کند.</div>
+    <input id="bankAppLink" type="text" dir="ltr" placeholder="https://… یا پیوند رسمی اپلیکیشن" style="width:100%;margin-bottom:7px">
+    <div class="flexline" style="margin-bottom:12px">
+      <button type="button" class="sec" id="saveBankAppLinkBtn">ذخیره پیوند بانک</button>
+      <button type="button" id="openBankAppBtn">باز کردن همراه‌بانک</button>
+    </div>
+    <div class="divider" style="margin:12px 0"></div>
+    <h4 style="margin:4px 0 10px">۲) اطلاعات پرداخت</h4>
+    <div class="filterLabel">طرف حساب</div>
+    <select id="bankPayParty" style="width:100%;margin-bottom:8px"></select>
+    <div class="filterLabel">مبلغ پرداخت (تومان)</div>
+    <input id="bankPayAmount" type="text" inputmode="numeric" placeholder="مبلغ را وارد کنید" style="width:100%;margin-bottom:8px">
+    <div class="filterLabel">شماره کارت یا حساب مقصد (اختیاری)</div>
+    <input id="bankPayDestination" type="text" inputmode="numeric" placeholder="شماره کارت / حساب" style="width:100%;margin-bottom:8px">
+    <div class="filterLabel">تاریخ پرداخت (شمسی)</div>
+    <input id="bankPayDate" type="text" placeholder="1405/08/28" style="width:100%;margin-bottom:8px">
+    <div class="filterLabel">شماره پیگیری / مرجع</div>
+    <input id="bankPayTracking" type="text" placeholder="پس از پرداخت وارد کنید" style="width:100%;margin-bottom:8px">
+    <div class="filterLabel">توضیحات</div>
+    <input id="bankPayNote" type="text" placeholder="شرح پرداخت (اختیاری)" style="width:100%;margin-bottom:8px">
+    <div class="filterLabel">تصویر رسید (اختیاری)</div>
+    <input id="bankPayReceipt" type="file" accept="image/*" style="width:100%;margin-bottom:10px">
+    <div class="hint" style="margin:8px 0">پس از انجام پرداخت در همراه‌بانک، به این صفحه برگردید، شماره پیگیری و رسید را وارد کنید و ثبت نهایی را بزنید. رسید به‌تنهایی تأیید قطعی واریز نیست.</div>
+    <button type="button" id="saveBankPaymentBtn" style="width:100%;margin:8px 0">ثبت پرداخت در حسابداری</button>
+    <div class="divider" style="margin:12px 0"></div>
+    <div class="filterLabel">افزودن بانک جدید</div>
+    <div class="flexline" style="margin-bottom:12px">
+      <input id="newBankName" type="text" maxlength="50" placeholder="نام بانک را وارد کنید">
+      <button type="button" class="mini" id="addBankBtn">➕ افزودن</button>
+    </div>
+    <div class="filterLabel">مدیریت بانک‌های تعریف‌شده</div>
+    <div id="bankList" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow:auto"></div>
+  </div>
+</div>
+
 <div class="modal-bg" id="calculatorBg">
   <div class="modal" style="max-width:360px">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px">
-      <h4 style="margin:0">🧮 ماشینحساب</h4>
+      <h4 style="margin:0">🧮 ماشین حساب</h4>
       <button type="button" class="del" id="calcCloseBtn" style="width:auto;margin:0">بستن</button>
     </div>
     <div class="calc-display" id="calcDisplay" aria-live="polite">۰</div>
@@ -891,7 +936,7 @@
       <button type="button" data-calc="1">۱</button><button type="button" data-calc="2">۲</button><button type="button" data-calc="3">۳</button><button type="button" class="op" data-calc="-">−</button>
       <button type="button" data-calc="0">۰</button><button type="button" data-calc=".">.</button><button type="button" class="eq" data-calc="=">=</button><button type="button" class="op" data-calc="+">+</button>
     </div>
-    <div class="hint" style="margin-top:9px;text-align:center">عملیات چهارگانه و پرانتز پشتیبانی میشود.</div>
+    <div class="hint" style="margin-top:9px;text-align:center">عملیات چهارگانه و پرانتز پشتیبانی می‌شود.</div>
   </div>
 </div>
 
@@ -993,7 +1038,7 @@ const DEFAULT_CATS = { out:['خواربار','اجاره','قبوض','درمان
 const AUTO_BACKUP_KEY = 'familyAccAutoBackups';
 
 function defaultData(){
-  return { schema: 20, accounts: [{id:'a'+Date.now(), name:'خانوار'}], active: null, trans: [], people: [], store: [], parties: [], buyerCodes: [], notes: [], recurring: [], cats: {out:[...DEFAULT_CATS.out], in:[...DEFAULT_CATS.in]}, subcats: {out:{}, in:{}}, reportFilter: {fromJ:null, toJ:null}, ui: {font:'Vazirmatn', fs:14, theme:'light', lang:'fa'}, autoBackup: true, aboutText: 'حساب خانواده — برنامهٔ مدیریت مالی خانواده.\n\nنسخه ۳.۰ (بودجهبندی پیشرفته)', recurringLastRun: {} };
+  return { schema: 22, bankAppLinks: {}, banks: ['بانک ملت','بانک تجارت','بانک شهر','بانک سپه','بانک ملی','بانک صادرات','بانک رفاه','بانک کشاورزی','بانک مسکن','بانک پاسارگاد','بانک سامان','بانک پارسیان','پست بانک'], accounts: [{id:'a'+Date.now(), name:'خانوار'}], active: null, trans: [], people: [], store: [], parties: [], buyerCodes: [], notes: [], recurring: [], cats: {out:[...DEFAULT_CATS.out], in:[...DEFAULT_CATS.in]}, subcats: {out:{}, in:{}}, reportFilter: {fromJ:null, toJ:null}, ui: {font:'Vazirmatn', fs:14, theme:'light', lang:'fa'}, autoBackup: true, aboutText: 'حساب خانواده — برنامهٔ مدیریت مالی خانواده.\n\nنسخه ۳.۰ (بودجهبندی پیشرفته)', recurringLastRun: {} };
 }
 
 const DB = {
@@ -1010,7 +1055,7 @@ const DB = {
     }catch(e){ console.error('DB load error:', e); this.data = defaultData(); if(!this.data.active) this.data.active = this.data.accounts[0].id; }
   },
   async save(){
-    try{ this.data.schema = 20; await IDB.set('main', this.data); if(this.data.autoBackup) await doAutoBackup(); await writeSyncFile(); }catch(e){ console.error('save error', e); }
+    try{ this.data.schema = 22; await IDB.set('main', this.data); if(this.data.autoBackup) await doAutoBackup(); await writeSyncFile(); }catch(e){ console.error('save error', e); }
   },
   toJSON(){ return this.data; }
 };
@@ -1020,7 +1065,10 @@ function migrate(d){
   if(!d || typeof d !== 'object') d = {};
   if(!d.schema || d.schema < 20) d = migrateV19toV20(d);
   let out = Object.assign({}, base, d);
-  out.schema = 20;
+  out.schema = 22;
+  if(!out.bankAppLinks || typeof out.bankAppLinks !== 'object' || Array.isArray(out.bankAppLinks)) out.bankAppLinks = {};
+  if(!Array.isArray(out.banks)) out.banks = [...base.banks];
+  out.banks = [...new Set(out.banks.map(x => String(x || '').trim()).filter(Boolean))];
   if(!Array.isArray(out.accounts) || !out.accounts.length) out.accounts = base.accounts;
   if(!out.active) out.active = out.accounts[0].id;
   if(!out.cats || !out.cats.out || !out.cats.in) out.cats = {out:[...DEFAULT_CATS.out], in:[...DEFAULT_CATS.in]};
@@ -2546,6 +2594,90 @@ function handleCalcKey(key){
   if(calcJustEvaluated){if(/[0-9.]/.test(key))calcExpression='';calcJustEvaluated=false;}
   calcExpression+=key;showCalcDisplay(calcExpression);
 }
+function renderBankManagement(){
+  const banks = Array.isArray(DB.data.banks) ? DB.data.banks : [];
+  const sel = $('bankPaySelect');
+  const oldValue = sel ? sel.value : '';
+  if(sel){
+    sel.innerHTML = banks.length ? banks.map((b,i)=>`<option value="${i}">${esc(b)}</option>`).join('') : '<option value="">بانکی تعریف نشده است</option>';
+    if(oldValue !== '' && Number(oldValue) < banks.length) sel.value = oldValue;
+  }
+  const partySel = $('bankPayParty');
+  if(partySel){
+    const oldParty = partySel.value;
+    const parties = Array.isArray(DB.data.parties) ? DB.data.parties : [];
+    partySel.innerHTML = '<option value="">انتخاب طرف حساب</option>' + parties.map(p=>`<option value="${esc(String(p.id))}">${esc(p.name||'بدون نام')}</option>`).join('');
+    if(parties.some(p=>String(p.id)===oldParty)) partySel.value=oldParty;
+  }
+  const list = $('bankList');
+  if(list){ list.innerHTML = banks.length ? banks.map((b,i)=>`<div class="flexline" style="align-items:center"><span style="flex:1;padding:8px;background:var(--chip);border-radius:8px">${esc(b)}</span><button type="button" class="del" data-bank-delete="${i}" style="width:auto;margin:0">حذف</button></div>`).join('') : '<div class="hint">هنوز بانکی اضافه نشده است.</div>'; }
+  syncBankAppLinkField();
+}
+function syncBankAppLinkField(){
+  const sel=$('bankPaySelect'), input=$('bankAppLink'); if(!sel||!input) return;
+  const bank=(DB.data.banks||[])[Number(sel.value)];
+  input.value = bank && DB.data.bankAppLinks ? (DB.data.bankAppLinks[bank]||'') : '';
+}
+function openBankPay(){
+  renderBankManagement();
+  if($('bankPayDate') && !$('bankPayDate').value) $('bankPayDate').value=todayJ();
+  $('bankPayBg').classList.add('show');
+}
+function addBank(){
+  const input=$('newBankName'); const name=(input.value||'').trim();
+  if(!name){ toast('نام بانک را وارد کنید'); return; }
+  if((DB.data.banks||[]).some(x=>x.toLocaleLowerCase()===name.toLocaleLowerCase())){ toast('این بانک قبلاً اضافه شده است'); return; }
+  DB.data.banks.push(name); DB.save(); input.value=''; renderBankManagement(); toast('بانک اضافه شد');
+}
+function deleteBank(index){
+  const banks=DB.data.banks||[]; if(index<0||index>=banks.length) return;
+  const name=banks[index]; if(!safeConfirm('بانک «'+name+'» از فهرست حذف شود؟')) return;
+  banks.splice(index,1); if(DB.data.bankAppLinks) delete DB.data.bankAppLinks[name]; DB.save(); renderBankManagement(); toast('بانک حذف شد');
+}
+function saveBankAppLink(){
+  const banks=DB.data.banks||[], bank=banks[Number($('bankPaySelect').value)], link=($('bankAppLink').value||'').trim();
+  if(!bank){toast('ابتدا بانک را انتخاب کنید');return;}
+  if(link && !/^(https?:\/\/|intent:\/\/|[a-z][a-z0-9+.-]*:\/\/)/i.test(link)){toast('پیوند معتبر وارد کنید');return;}
+  if(!DB.data.bankAppLinks) DB.data.bankAppLinks={};
+  if(link) DB.data.bankAppLinks[bank]=link; else delete DB.data.bankAppLinks[bank];
+  DB.save(); toast('پیوند بانک ذخیره شد');
+}
+function openSelectedBankApp(){
+  const banks=DB.data.banks||[], bank=banks[Number($('bankPaySelect').value)], link=($('bankAppLink').value||'').trim();
+  if(!bank){toast('ابتدا بانک را انتخاب کنید');return;}
+  if(!link){toast('برای این بانک هنوز پیوند رسمی همراه‌بانک ثبت نشده است');return;}
+  // This only hands off to a bank-provided app/deep link; it does not perform or verify a transfer.
+  window.location.href=link;
+}
+async function saveBankPayment(){
+  const bank=(DB.data.banks||[])[Number($('bankPaySelect').value)];
+  const partyId=$('bankPayParty').value;
+  const party=(DB.data.parties||[]).find(p=>String(p.id)===String(partyId));
+  const amount=parseAmount($('bankPayAmount').value);
+  const dateJ=($('bankPayDate').value||'').trim();
+  if(!bank){toast('بانک را انتخاب کنید');return;}
+  if(!party){toast('طرف حساب را انتخاب کنید');return;}
+  if(!amount || amount<=0){toast('مبلغ معتبر وارد کنید');return;}
+  if(!isValidJ(dateJ)){toast('تاریخ شمسی معتبر وارد کنید');return;}
+  const file=$('bankPayReceipt').files && $('bankPayReceipt').files[0];
+  if(file && file.size>4*1024*1024){toast('حجم تصویر رسید باید کمتر از ۴ مگابایت باشد');return;}
+  let receiptData='', receiptName='', receiptType='';
+  if(file){
+    try{ receiptData=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result||''));r.onerror=reject;r.readAsDataURL(file);}); receiptName=file.name; receiptType=file.type||'image/*'; }
+    catch(e){toast('خواندن تصویر رسید ناموفق بود');return;}
+  }
+  const tracking=($('bankPayTracking').value||'').trim();
+  const destination=($('bankPayDestination').value||'').trim();
+  const extra=($('bankPayNote').value||'').trim();
+  const note=['پرداخت بانکی', 'بانک: '+bank, tracking?'شماره پیگیری: '+tracking:'', destination?'مقصد: '+destination:'', extra].filter(Boolean).join(' | ');
+  DB.data.trans.push({id:Date.now(),acct:DB.data.active,type:'out',amount:amount,partyId:String(party.id),cat:'',subcat:'',note:note,card:destination,dateJ:dateJ,receiptText:'',receiptData:receiptData,receiptName:receiptName,receiptType:receiptType,bankName:bank,bankTracking:tracking,createdAt:Date.now()});
+  await DB.save();
+  if(typeof renderAll==='function') await renderAll();
+  ['bankPayAmount','bankPayDestination','bankPayTracking','bankPayNote','bankPayReceipt'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  $('bankPayDate').value=todayJ();
+  toast('پرداخت در حسابداری ثبت شد؛ صحت واریز باید از حساب بانکی بررسی شود');
+}
+
 function openCalculator(){calcExpression='';calcJustEvaluated=false;showCalcDisplay('');$('calculatorBg').classList.add('show');}
 
 function bindEvents(){
@@ -2672,10 +2804,20 @@ function bindEvents(){
     if(t === 'about'){ showAbout(); } 
     else if(t === 'budget'){ openBudgetModal(); }
     else if(t === 'calculator'){ openCalculator(); }
+    else if(t === 'bankpay'){ openBankPay(); }
     else goToTab(t); 
   }));
 
   on('calcCloseBtn','click', () => $('calculatorBg').classList.remove('show'));
+  on('bankPayCloseBtn','click', () => $('bankPayBg').classList.remove('show'));
+  on('bankPaySelect','change', syncBankAppLinkField);
+  on('saveBankAppLinkBtn','click', saveBankAppLink);
+  on('openBankAppBtn','click', openSelectedBankApp);
+  on('saveBankPaymentBtn','click', saveBankPayment);
+  on('addBankBtn','click', addBank);
+  on('newBankName','keypress', e => { if(e.key==='Enter') addBank(); });
+  on('bankList','click', e => { const b=e.target.closest('[data-bank-delete]'); if(b) deleteBank(Number(b.getAttribute('data-bank-delete'))); });
+  on('bankPayBg','click', e => { if(e.target === $('bankPayBg')) $('bankPayBg').classList.remove('show'); });
   on('calcKeys','click', e => { const b=e.target.closest('[data-calc]'); if(b) handleCalcKey(b.getAttribute('data-calc')); });
   on('calculatorBg','click', e => { if(e.target === $('calculatorBg')) $('calculatorBg').classList.remove('show'); });
   on('calculatorBg','keydown', e => {
@@ -2812,6 +2954,7 @@ async function boot(){
   if(DB.data.reportFilter.toJ) setDateBtn('gToBtn', DB.data.reportFilter.toJ);
 
   initUI();
+  renderBankManagement();
   refreshCatOptionsFor('t'); refreshCatOptionsFor('et'); refreshStoreCatOptions();
   refreshPartyOptions('t'); refreshPartyOptions('et');
   updateTransStoreLink();
@@ -2828,7 +2971,7 @@ async function boot(){
   else showLockIfNeeded();
 
   if(isLicenseValid()) setTimeout(runRecurring, 1000);
-  console.info('[FAMILY-ACC v3.0] کد مالک:', OWNER_MASTER_CODE);
+  console.info('[FAMILY-ACC v3.1] کد مالک:', OWNER_MASTER_CODE);
 }
 
 if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', () => boot().catch(e => console.error('boot:', e))); }
